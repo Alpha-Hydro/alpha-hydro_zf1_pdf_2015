@@ -298,9 +298,9 @@ class Model_Static_PdfBook {
 
         // --- block / images
         
-        $images = array($product -> image);
-        if ($product -> a_images)
-            $images[] = $product -> a_images[0];
+        $images = array($product->image);
+        if ($product->a_images)
+            $images[] = $product->a_images[0];
 
         $x = 0;
 

@@ -10,9 +10,9 @@
 				<adapter>pdo_mysql</adapter>
 				<params>
 					<host>localhost</host>
-					<username>alphahydro</username>
-					<password>alphahydro556</password>
-					<dbname>alphahydro2015</dbname>
+					<username>root</username>
+					<password></password>
+					<dbname>db1057313_alphahyd</dbname>
 					<charset value="utf8" />
 				</params>
 			</db>

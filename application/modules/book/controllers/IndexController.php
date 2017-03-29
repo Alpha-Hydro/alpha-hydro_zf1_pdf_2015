@@ -37,7 +37,11 @@ class Book_IndexController extends Zend_Controller_Action {
 	    }
         $categoriesModel = new Model_DbTable_Categories();
 
-        $this -> view -> categories = $categoriesModel -> fetchAll($categoriesModel -> select() -> where('`parent_id` IS NULL') -> order("order"));
+        $this->view->categories = $categoriesModel->fetchAll(
+            $categoriesModel
+                ->select()
+                ->where('parent_id IS NULL OR parent_id = 0')
+                ->order("order"));
     }
 
     /**
@@ -128,19 +132,24 @@ class Book_IndexController extends Zend_Controller_Action {
 
         $this->_helper->layout->disableLayout();
 
-        $page = $this -> getRequest() -> getParam("page");
-        $categoryId = $this -> getRequest() -> getParam("id");
-        $exceptionList = $this->getRequest()->getParam("except");
-        $this->secondTime = (int) $this->getRequest()->getParam("second_time");
-        $pageFormat = $this->getRequest()->getParam("pageFormat");
-        $print = $this->getRequest()->getParam("print");
-
-       /* $page = 3;
-        $categoryId = 89;
-        $exceptionList = null;
-        $this->secondTime = 0;
-        $pageFormat = "A4";
-        $print = true;*/
+        $page = ($this -> getRequest() -> getParam("page"))
+            ? $this -> getRequest() -> getParam("page")
+            : 3;
+        $categoryId = ($this -> getRequest() -> getParam("id"))
+            ? $this -> getRequest() -> getParam("id")
+            : 779;
+        $exceptionList = ($this->getRequest()->getParam("except"))
+            ? $this->getRequest()->getParam("except")
+            : null;
+        $this->secondTime = ($this->getRequest()->getParam("second_time"))
+            ? (int) $this->getRequest()->getParam("second_time")
+            : 0;
+        $pageFormat = ($this->getRequest()->getParam("pageFormat"))
+            ? $this->getRequest()->getParam("pageFormat")
+            :"A4";
+        $print = ($this->getRequest()->getParam("print"))
+            ? $this->getRequest()->getParam("print")
+            : true;
 
 
         $pdfBook = new Model_Static_PdfBook($pageFormat , $print);
@@ -160,24 +169,6 @@ class Book_IndexController extends Zend_Controller_Action {
         //передаем id категории и запускаем процесс генерации данной категории
         $book = $pdfBook->byCategory($category, $page, $exceptionList,$this->secondTime);
         $pdfBook->logger->log('Return generated pdfBook', Zend_Log::INFO);
-
-        /*try{
-            $book = $pdfBook->byCategory($category, $page, $exceptionList,$this->secondTime);
-            $pdfBook->logger->log('Return generated pdfBook', Zend_Log::INFO);
-            $this->view->assign([
-                'page' => $page,
-                'categoryId' => $categoryId,
-                'exceptionList' => $exceptionList,
-                'secondTime' => $this->secondTime,
-                'pageFormat' => $pageFormat,
-                'print' => $print,
-                'category' => $category,
-                'exceptionProductList' => $pdfBook->exceptionProductList,
-                'book' => $book,
-            ]);
-        }catch (ErrorException $exception){
-            $pdfBook->logger->log($exception->getMessage(), Zend_Log::ALERT);
-        }*/
 
 		$topParent = $category->findTopParent();
 		$pdfBook -> addCategoryToIndex($topParent->id, $page, 0);
@@ -202,9 +193,9 @@ class Book_IndexController extends Zend_Controller_Action {
 		}
 		$pdfBook = new Model_Static_PdfBook($pageFormat, $print);
 		
-		$book = $pdfBook -> generateContents($startPage);
+		$book = $pdfBook->generateContents($startPage);
 		$this->contentPages = count($book -> pages);
-		$this -> view -> nextpage = $startPage + count($book -> pages);
+		$this->view->nextpage = $startPage + count($book->pages);
 		
 		$saveFilename = 'contents-'.$startPage.'.pdf';
 		
@@ -219,38 +210,40 @@ class Book_IndexController extends Zend_Controller_Action {
      * @internal param int $page Current page
      */
     public function finishbookAction() {
-	if ( !Zend_Auth::getInstance()->hasIdentity() ) {
-		throw new Zend_Exception ( "Page not found", 404 );
-	}
+        if ( !Zend_Auth::getInstance()->hasIdentity() ) {
+            throw new Zend_Exception ( "Page not found", 404 );
+        }
         $this -> _helper -> layout -> disableLayout();
+
         $page = $this -> getRequest() -> getParam("page");
-	$startPage = $this -> getRequest() -> getParam("startPage");
-	$pageFormat = $this->getRequest()->getParam("pageFormat");	
-	$print = $this->getRequest()->getParam("print");
-	$pdfBook = new Model_Static_PdfBook($pageFormat, $print);
-	//если формат А4 то мы добавляем дополнительные файлы в конечный архив и также рендерим страници " наше предложение" с нужной номерацией
-	if($pageFormat == "A4"){
-		$bookOurProduction = $pdfBook -> generateOurProduction($page, $print);
-		$page += 2;
-		$saveFilenameOurProduction = "ourProduction.pdf";
-		$bookOurProduction -> save($this::PDFBOOK_DIR . '/' . $saveFilenameOurProduction);
-		
-		$dir  = $this::PDFCOVER_DIR;
-		$files = scandir($dir);
-		//перебераем все файлы которые числяться как добавочные и добавляем их в архив
-		foreach($files as $file){
-			if(is_dir($file)) continue;
-			$front = Zend_Pdf::load($this::PDFCOVER_DIR. '/' .$file);
-			$front -> save($this::PDFBOOK_DIR. '/' .$file);
-		}
-	}
+        $startPage = $this -> getRequest() -> getParam("startPage");
+        $pageFormat = $this->getRequest()->getParam("pageFormat");
+        $print = $this->getRequest()->getParam("print");
+        $pdfBook = new Model_Static_PdfBook($pageFormat, $print);
+
+	    //если формат А4 то мы добавляем дополнительные файлы в конечный архив и также рендерим страници " наше предложение" с нужной номерацией
+        if($pageFormat == "A4"){
+            $bookOurProduction = $pdfBook -> generateOurProduction($page, $print);
+            $page += 2;
+            $saveFilenameOurProduction = "ourProduction.pdf";
+            $bookOurProduction -> save($this::PDFBOOK_DIR . '/' . $saveFilenameOurProduction);
+
+            $dir  = $this::PDFCOVER_DIR;
+            $files = scandir($dir);
+            //перебераем все файлы которые числяться как добавочные и добавляем их в архив
+            foreach($files as $file){
+                if(is_dir($file)) continue;
+                $front = Zend_Pdf::load($this::PDFCOVER_DIR. '/' .$file);
+                $front -> save($this::PDFBOOK_DIR. '/' .$file);
+            }
+        }
 	
-        $book = $pdfBook -> IndexPages($page);
-        $this -> view -> nextpage = $page + count($book->pages);
+        $book = $pdfBook->IndexPages($page);
+        $this->view->nextpage = $page + count($book->pages);
 		
         $saveFilename = str_repeat("0", 4 - strlen($page)) . $page . '-' . $this -> view -> nextpage . '.pdf';
         
-        $book -> save($this::PDFBOOK_DIR . '/' . $saveFilename);
+        $book->save($this::PDFBOOK_DIR . '/' . $saveFilename);
 		
 		if($this->secondTime == 0) {
 			$this->generateContents($startPage, $pageFormat, $print);
@@ -287,26 +280,27 @@ class Book_IndexController extends Zend_Controller_Action {
     }
 	
 	public function zipResults() {
-	if ( !Zend_Auth::getInstance()->hasIdentity() ) {
-	    throw new Zend_Exception ( "Page not found", 404 );
-	}
+        if ( !Zend_Auth::getInstance()->hasIdentity() ) {
+            throw new Zend_Exception ( "Page not found", 404 );
+        }
+
 		$path = $this::PDFBOOK_DIR;
 		$zip = new ZipArchive;
 		$zip->open($path.'catalog.zip', ZipArchive::CREATE);
 		if (false !== ($dir = opendir($path)))
-		     {
-		         while(false !== ($file = readdir($dir)))
-		         {
-		             if ($file != '.' && $file != '..')
-		             {
-		             	$zip->addFile($path.DIRECTORY_SEPARATOR.$file, $file);
-		             }
-		         }
-		     }
-		     else
-		     {
-		         die('Can\'t read dir');
-		     }
+         {
+             while(false !== ($file = readdir($dir)))
+             {
+                 if ($file != '.' && $file != '..')
+                 {
+                    $zip->addFile($path.DIRECTORY_SEPARATOR.$file, $file);
+                 }
+             }
+         }
+         else
+         {
+             die('Can\'t read dir');
+         }
 		$zip->close();									
 	}
 

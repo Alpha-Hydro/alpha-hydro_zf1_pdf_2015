@@ -100,8 +100,8 @@ class Model_Static_PdfPage extends Zend_Pdf_Page {
      */
     protected $SIDEICONS = array(
                                     '3',
-				    '1624',
-				    '86',
+                                    '1624',
+                                    '86',
                                     '121',
                                     '2',
                                     '18',
@@ -192,8 +192,8 @@ class Model_Static_PdfPage extends Zend_Pdf_Page {
         if( $height > 16  ){
             $y = 1;
         }
-        $this -> drawTextBlock($category, ($this -> pageNum % 2) ? $this::LOGO_WIDTH + 30 + 10 : 30 + 10, $y, $style);
-        $this -> setCurrentPosition($curPos);
+        $this->drawTextBlock($category, ($this -> pageNum % 2) ? $this::LOGO_WIDTH + 30 + 10 : 30 + 10, $y, $style);
+        $this->setCurrentPosition($curPos);
     }
 
     /**

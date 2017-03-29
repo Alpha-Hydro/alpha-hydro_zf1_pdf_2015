@@ -86,11 +86,15 @@
                     if(secondTime == 1) {
                         $("#log").append(Categories[i][0] + " - сгенерировано\n");
                     } else {
-                        $("#log").append("Расчет нумерации страниц для категории " + Categories[i][0] + " прошел успешно\n");
+                        $("#log").append("Расчет нумерации страниц для категории " + Categories[i][0] + ", id:" + Categories[i][1] + " прошел успешно\n");
                     }
                     generateCategory(i + 1);
                 }, 'json')
                 .error(function() {
+//                    console.log(xhr.statusText);
+//                    console.log(textStatus);
+//                    console.log(error);
+//                    $("#log").append("ОШИБКА расчета нумерации страниц для категории " + Categories[i][0] + ", id:" + Categories[i][1]+"\n");
                     alert("Error occurred");
                     buttonEnable();
                     $('#loading').hide();
