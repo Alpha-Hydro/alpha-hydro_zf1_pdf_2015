@@ -1,0 +1,6 @@
+<?php
+Zend_Registry::set("production", $this -> page -> name);
+Zend_Registry::set("post-id", $this -> page -> id);
+echo $this -> page -> content;
+$this -> headScript() -> appendFile("/scripts/production.js");
+?>

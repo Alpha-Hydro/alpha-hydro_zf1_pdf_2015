@@ -1,0 +1,14 @@
+<form method="post" class="edit-answer" data-id="<?=$this->answer->id?>" action="/forum/edit?id=<?=$this->answer->id?>">
+<span class="title"> <span class="name"><?=Zend_Auth::getInstance()->getIdentity()->name; ?></span>
+— <span class="date"><input type="text" class="datepicker" readonly="readonly"  name="timestamp" value="<?=date("d.m.Y", strtotime($this->answer->timestamp)); ?>" /></span>
+</span>
+		
+<div class="content">
+		<div style="float: right">
+			<input title="сохранить" type="submit" class="admin save" /><br/>
+			<a title="отменить" href="javascript:void(0);" class="admin cancel" style="margin-top: 3px">-</a><br/>
+		</div>
+		
+		<textarea name="answer" class="admin" id="answer_<?=$this->answer->id ?>" style="width: 900px; height: 100px;"><?=$this->answer->content?></textarea>
+</div>
+</form>

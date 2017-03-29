@@ -1,0 +1,102 @@
+<?php
+$this->headScript ()->appendFile ( "/scripts/tabs.my.js" );
+?>
+<table cellpadding="0" cellspacing="0" id="section">
+	<tr>
+		<td class="title"><h2>Пресса</h2></td>
+		<td class="tabs header">
+			<a href="#news"><span class="left img">-</span><span class="content">Новости</span><span class="right img">-</span></a>
+			<? if ($this->isAllowed("page", "new")) :?><a title="добавить" href="/sections/edit?type=news" class="admin new">-</a><? endif; ?>
+			<a href="#stocks"><span class="left img">-</span><span class="content">Акции</span><span class="right img">-</span></a>
+			<? if ($this->isAllowed("page", "new")) :?><a title="добавить" href="/sections/edit?type=stocks" class="admin new">-</a><? endif; ?>
+			<a href="#posts"><span class="left img">-</span><span class="content">Статьи</span><span class="right img">-</span></a>
+			<? if ($this->isAllowed("page", "new")) :?><a title="добавить" href="/sections/edit?type=posts" class="admin new">-</a><? endif; ?>
+			<a href="#archive"><span class="left img">-</span><span class="content">Архив</span><span class="right img">-</span></a>
+	</tr>
+	<tr>
+		<td class="tabs content" colspan="2" id="media-content">
+			<div id="tab-news">
+			<?php
+			if (isset ( $this->news ) && count ( $this->news ) > 0) :
+				foreach ( $this->news as $item ) :?>
+                <div class="news item">
+                    <?php if ( $item->thumb ) : ?>
+                        <div class="thumb"><a href="<?=$this->url(array("action"=>"news", "id"=>$item->id))?>"><img src="<?=$item -> thumb ?>"
+						alt="<?=$item -> name ?>" /></a></div>
+                    <?php endif; ?>
+                    <div>
+						<h3>
+							<a href="<?=$this->url(array("action"=>"news", "id"=>$item->id))?>"><?=$item -> name ?></a>
+							<? if ( $this->isAllowed("page", "edit") ) :?>
+							<a title="редактировать" href="/sections/edit?type=news&id=<?=$item->id?>" class="admin edit">-</a>
+                			<a title="удалить" href="/sections/delete?id=<?=$item->id?>" class="admin delete">-</a>
+                			<? endif; ?>
+						</h3>
+						<span class="description">
+                        <?=$item -> content?>
+                    </span>
+					</div>
+					<br clear="all" />
+				</div>
+			<?php endforeach;
+			 else : ?>
+			<h2>На текущий момент новостей нет</h2>
+			<?php endif; ?>
+		</div>
+		
+		<div id="tab-stocks" style="display: none;">
+			<?php
+			if (isset ( $this->stocks ) && count ( $this->stocks  ) > 0) :
+				foreach ( $this->stocks as $item ) :?>				
+                <div class="news item">
+                    <?php if ( $item->thumb ) : ?>
+                        <a href="<?=$this->url(array("action"=>"news", "id"=>$item->id))?>"><img src="<?=$item -> thumb ?>"
+						alt="<?=$item -> name ?>" /></a>
+                    <?php endif; ?>
+                    <div>
+						<h3>
+							<a href="<?=$this->url(array("action"=>"news", "id"=>$item->id))?>"><?=$item -> name ?></a>
+							<? if ( $this->isAllowed("page", "edit") ) :?>
+							<a  title="редактировать" href="/sections/edit?type=stocks&id=<?=$item->id?>" class="admin edit">-</a>
+                			<a  title="удалить" href="/sections/delete?id=<?=$item->id?>" class="admin delete">-</a>
+                			<? endif; ?>					
+						</h3>
+					<span class="description">
+                        <?=$item -> s_content?>
+                    </span>
+					</div>
+					<br clear="all" />
+				</div>
+			<?php endforeach;
+			 else : ?>
+			<h2>На текущий момент акций нет</h2>
+			<?php endif; ?>
+        </div>
+
+		<div id="tab-posts" style="display: none;">
+        <?php									
+			if (isset ( $this->posts ) && count ( $this->posts ) > 0) :
+				$letter = "";
+				foreach ( $this->posts as $item ) :
+					if ($letter != mb_substr ( $item->name, 0, 1, "UTF-8" )) :
+						$letter = mb_substr ( $item->name, 0, 1, "UTF-8" );
+		?><h3 class="posts letter"><?=$letter?></h3><?
+                endif;
+                ?>
+                <span class="posts item">
+                	<a href="<?=$this->url(array("action"=>"post", "id"=>$item->id))?>"><?=$item->name?></a>
+                	<? if (  $this->isAllowed("page", "edit") ) :?>
+                	<a title="редактировать" href="/sections/edit?type=posts&id=<?=$item->id?>" class="admin edit">-</a>
+                	<a title="удалить" href="/sections/delete?id=<?=$item->id?>" class="admin delete">-</a>
+                	<? endif; ?>
+                </span>
+                
+            <?php endforeach;
+            	else : ?>
+            <h2>На текущий момент статей нет</h2>
+            <?php endif; ?>
+        </div>
+
+		</td>
+	</tr>
+</table>

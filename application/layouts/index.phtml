@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="shortcut icon" href="/favicon.png" />
+		<?php
+		echo $this->headMeta ();
+		
+		echo $this->headTitle ( "Альфа-Гидро" );
+		
+		echo $this->headLink ()
+			->appendStylesheet ( 'http://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,cyrillic' )
+			->appendStylesheet ( '/scripts/fancybox/jquery.fancybox-1.3.4.css' )
+			->appendStylesheet ( '/css/application.css' );
+		echo $this->headScript ()-> prependFile ( "/scripts/jquery-1.8.1.min.js" );
+		?>
+		
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	</head>
+	
+<body>
+	<? echo $this->partial("components/adminZone.phtml")?>
+	<div id="page">
+		<div id="header">
+		<? echo $this->partial("components/_header.phtml") ?>
+			<div id="sections">
+				<a class="section big" href="/catalog" id="catalog"> <img
+					src="/images/sections/catalog.png" alt="Раздел" />					
+					<div class="wrapper">
+						<span>Каталог продукции</span>
+					</div>
+				</a> <a class="section big" id="production" href='/sections/production'> <img
+					src="/images/sections/production.png" alt="Раздел" />					
+					<div class="wrapper">
+						<span>Наше производство</span>
+					</div>
+				</a>
+				<br clear="all" />
+				<a class="section big" href="/sections/oil/" id="oil"> <img
+					src="/images/sections/oils.png" alt="Раздел" />					
+					<div class="wrapper">
+						<span>Масла</span>
+					</div>
+				</a>				
+				<a class="section big" href="/sections/pipeline/" id="pipeline"> <img
+					src="/images/sections/pipeline-access.png" alt="Раздел" />					
+					<div class="wrapper">
+						<span>Трубопроводная арматура</span>
+					</div>
+				</a>				
+				<br clear="all" />
+			</div>
+
+		</div>
+		<div id="i-content">
+			<?php
+				echo $this->layout()->content;
+			?>		
+			 
+		</div>
+
+	<div id="pre-footer"></div> 	
+	</div>
+
+	<? echo $this->partial("components/_footer.phtml") ?>
+
+	
+	<?php
+	echo $this->headScript ()	-> prependFile ( "/scripts/less-1.3.0.min.js" )
+								-> prependFile ( "/scripts/jquery-1.8.1.min.js" )
+								-> appendFile ( "/scripts/fancybox/jquery.fancybox-1.3.4.pack.js" )
+								-> appendFile ( "/scripts/mainmenu.js" )
+								-> appendFile ( "/scripts/scripts.js" )
+	?>
+	
+</body>
+</html>

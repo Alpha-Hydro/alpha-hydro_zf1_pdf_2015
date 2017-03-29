@@ -1,0 +1,17 @@
+<form action="/book/index/generate/" method="POST" id="book-categories">
+    <ul class="book-categories-list">
+
+<? foreach ( $this->categories as $category ) : ?>
+    <li> <input type="checkbox" name="categories[]" value="<?=$category->id?>" /> <?=$category->name?></li>
+<? endforeach; ?>
+    </ul>    
+    <br />
+    За исключением категорий (id категорий через запятую):<br />
+    <textarea name="except" style="width: 500px; height: 200px;"></textarea><br />
+    За исключением товаров (id товаров через запятую):<br />
+    <textarea name="except_products" style="width: 500px; height: 200px;"></textarea>
+    <br /><br />
+    Начинать нумерацию со страницы <input type="text" name="page" value="3" maxlength="4" />
+     <br /><br />
+    <input type="submit" />
+</form>

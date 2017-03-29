@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<information xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+    <name>ALPHA-HYDRO</name>
+    <address>г. Санкт-Петербург,  ул. Кржижановского, д.12/1</address>
+    <image>/files/images/company-photo.png</image>
+    <phone>44-949-44</phone>
+    <phone2>33-636-59</phone2>
+    <phone3>700-27-80</phone3>
+    <email>info@alpha-hydro.com</email>
+    <map>
+        <access>
+            <img>/files/images/map-access.png</img>
+        </access>
+        <google>
+            <coordinates>
+                <lon></lon>
+                <lat></lat>
+            </coordinates>
+        </google>
+    </map>
+</information>

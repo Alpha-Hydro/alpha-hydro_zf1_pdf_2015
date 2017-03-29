@@ -1,0 +1,12 @@
+Deny from 95.31.130.9
+
+##AddHandler x-httpd-php53 .php 
+AddDefaultCharset UTF-8
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
+

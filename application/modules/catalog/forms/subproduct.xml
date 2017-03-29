@@ -1,0 +1,36 @@
+<product>
+	<action>/products/edit</action>
+	<method>POST</method>
+	<name>product</name>
+	<elements>
+		<sku>
+			<type>text</type>
+			<options>
+				<label>SKU</label>
+				<required>true</required>
+			</options>
+		</sku>
+
+		<name>
+			<type>text</type>
+			<options>
+				<label>Title</label>
+				<required>true</required>
+			</options>
+		</name>
+
+		<order>
+			<type>text</type>
+			<options>
+				<label>Order</label>
+			</options>
+		</order>
+		
+		<submit>
+			<type>submit</type>
+			<options>
+				<label>Save</label>
+			</options>
+		</submit>
+	</elements>
+</product>

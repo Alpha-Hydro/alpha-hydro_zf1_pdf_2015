@@ -1,0 +1,33 @@
+<? if ( count($this -> rowset) > 0 ) :
+?><table class="select-list">
+	<tr>
+		<th></th>
+		<th>Название</th>
+		<th>Дата изменения</th>
+	</tr><?php
+	$row = $this -> rowset -> getRow(0);
+if($row -> parent_id) : ?><tr>
+	<td></td>
+	<td><a href="<?=$this->url(array("category"=>$row->getParent()->parent_id)); ?>">..</a></td>
+	<td></td>
+</tr><?php
+else :
+?><tr>
+	<td><input type="radio" name="category_id" value="" /></td>
+	<td><a href="<?=$this->url()?>"><i>нет родительской категории</i></a></td>
+	<td></td>
+</tr>
+<?php 
+endif;
+foreach ( $this->rowset as $row ) if ( $row->id != $this -> curRowId ) :
+?><tr>
+	<td><input type="radio" name="category_id" value="<?=$row->id?>" /></td>
+	<td><a href="<?=$this->url(array("category"=>$row->id))?>"><?=$row -> name?></a></td>
+	<td><?=$row -> mod_date?></td>
+</tr><?php
+endif; ?></table>
+<div class="select-list-buttons">
+	<a href="javascript:;" class="ok">ОК</a>
+	<a href="javascript:;" class="cancel">Отмена</a>
+</div><?php 
+endif;

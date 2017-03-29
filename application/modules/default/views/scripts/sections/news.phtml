@@ -1,0 +1,15 @@
+<div class="posts post">
+	<a href="/sections/media#tab-news" class="tomain">&lt;&lt; к оглавлению</a>
+	<h2><?=$this->post->name?>
+		<? if (Zend_Auth::getInstance()->hasIdentity()) :?>
+			<a title="редактировать" href="/sections/edit?id=<?=$this->post->id?>" class="admin edit">-</a>
+        	<a title="удалить" href="/sections/delete?id=<?=$this->post->id?>" class="admin delete">-</a>
+        <? endif; ?>	
+	</h2>
+	
+	<? if ( $this->post->thumb ) :?>
+		<img src="<?=$this->post->thumb?>" align="left" style="padding-right: 20px" />
+	<? endif;
+		echo $this->post->content;
+	?>
+</div>

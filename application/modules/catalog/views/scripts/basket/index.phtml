@@ -1,0 +1,51 @@
+<? if ( $this -> items ) : ?>
+<?php
+$this -> headScript() -> captureStart();
+?>
+$(function(){
+	$(".basket-item .delete").click(function(){
+		$(this).parents('.basket-item').remove();
+	});
+});
+<?php
+$this -> headScript() -> captureEnd();
+?>
+<form method="post">
+<div id="product" style="margin-left: 0"><?php
+foreach ( $this->items as $item ) :
+	?><table class="basket-item">
+		<tr>
+			<td class="image"><img
+				src="/files/images/product/<?=$item -> item -> getPrimaryImage() ?>" /></td>
+			<td class="item">
+				<h2><?=$item->item->sku?></h2> <small><?= $item -> item -> getPrimaryCategory() -> getBcnName() ?></small>
+			</td>
+			<td class="buy">Количество<br />
+			<span class="count"> <a href="javascript:;" class="down"></a><input
+					type="text" name="items[<?=$item->item->id?>]" value="<?=$item->count?>" /> <a href="javascript:;"
+					class="up"></a>
+			</span></td>
+			<td class="delete"><a class="admin delete" href="#">-</a><br />Удалить</td>
+		</tr>
+	</table><?php
+endforeach;
+?></div>
+<div id="form-basket">
+	<h3>Написать нам:</h3>
+
+	<div class="inline">
+		<label for="author">Имя*:</label> <input type="text" name="name"
+			id="author" /> <label for="email">Е-mail:</label> <input type="email"
+			name="email" id="email" /> &nbsp; <label for="phone">Телефон*:</label>
+		&nbsp; <input type="text" name="phone" id="phone" />
+	</div>
+	<label for="form_content" style="width: auto">Примечания:</label>
+	<textarea name="content" id="form_content"></textarea>
+
+	<div class="help">* Все поля обязательны для заполнения</div>
+	<input type="submit" value="Заказать" />
+</div>
+</form>
+<? else : ?>
+	<h2>В корзине нет товаров</h2>
+<? endif; ?>

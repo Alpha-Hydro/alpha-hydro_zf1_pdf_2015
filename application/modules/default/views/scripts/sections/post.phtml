@@ -1,0 +1,13 @@
+<div class="posts post">
+	<a href="/sections/media#posts" class="tomain">&lt;&lt; к оглавлению</a>
+	<h2><?=$this->post->name?>
+		<? if (Zend_Auth::getInstance()->hasIdentity()) :?>
+			<a title="редактировать" href="/sections/edit?type=posts&id=<?=$this->post->id?>" class="admin edit">-</a>
+        	<a title="удалить" href="/sections/delete?id=<?=$this->post->id?>" class="admin delete">-</a>
+        <? endif; ?>
+	</h2>
+	<?
+		echo $this->post->content;
+	?>
+	<span class="author">Автор: <?=$this->post->author?></span>
+</div>

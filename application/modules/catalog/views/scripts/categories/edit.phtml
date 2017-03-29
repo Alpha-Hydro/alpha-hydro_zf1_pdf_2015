@@ -1,0 +1,87 @@
+<script><?php
+$this -> headScript() -> captureStart();
+?>
+	$(function(){
+		$("body").append('<div id="bg-grey" style="display: none; position: absolute;top: 0;left: 0;height: 100%;width: 100%;z-index: 1101;background: #222; opacity: 0.6;"></div>');
+		$("body").append('<div id="window" class="production-item r big" style="min-height: 300px !important;"><div class="header"><a href="javascript:void(0)" class="close"><span>Закрыть</span></a></div><div class="content"></div></div>');
+
+		$(".admin-modal").click(function(){
+			$("#window .content").html("<center><img src='#' alt='loading'/></center>");		
+			$("#window").show();
+			$("#bg-grey").show();
+
+			$.get($(this).data("href"), {category: $(this).parent().find('#parent_id').val(), currentCategory: <?=$this->row->id?>}, function(response){
+				$("#window .content").html(response);
+			}).error(function(){
+				$("#window .content").html("<h2>error occured</h2>");
+			});
+			
+			$('html,body').animate({scrollTop: 0}, 1000);
+		});
+
+		$("#window .content .select-list a").live('click', function(){
+			var e = $(this);
+			$.get($(this).attr("href"), {currentCategory: <?=$this->row->id?>}, function( response ){
+				if ( response ){
+					$("#window .content").html( response );
+				} else {
+					$(e).parent().html( $(e).text() );
+				}
+			}).error(function(){
+				$("#window .content").html("<h2>error occured</h2>");
+			});;
+			
+			return false;
+		});
+
+		$("#window .content .select-list-buttons a").live("click", function(){
+			if ( $(this).hasClass('ok') ){
+				var input = $("#window .content input:checked");
+				$("#parent_id").val( input.val() );
+				$("#parent_id-title").text( input.parent().next().text() );
+			}
+
+			$("#window .close").click();
+			
+			return false;
+		});
+		
+		$("#window .close").click(function() {
+			$("#window").hide();
+			$("#bg-grey").hide();
+		});
+
+		
+	});
+<?php 
+$this -> headScript() -> captureEnd();
+?></script>
+<form class="category-edit" name="category" enctype="multipart/form-data" method="post">
+	<table style="width: 100%">
+		<tr>
+			<td valign="top">
+				<img src="<?=$this->row->image ? '/files/images/category/'.$this->row->image : 'http://fakeimg.pl/124x124/'?>" />
+				<br/>
+				<input type="file" name="image" value="<?=$this->row->image?>" id="image" />
+			</td>
+			<td valign="top" style="width: 100%">
+				<input type="text" name="name" id="name" style="width: 100%" placeholder="Название" value="<?=$this -> form -> name -> getValue()?>">
+				<br/>
+				<br/><label class="admin">родительская категория</label><br/>
+					<input type="hidden" name="parent_id" id="parent_id" value="<?=$this -> form -> parent_id -> getValue()?>" />
+					<span id="parent_id-title"><?=$this-> row -> getParent() ? $this-> row -> getParent() -> name : "нет родительской категории"?></span>
+					<a href="javascript:void(0);" class="admin-modal admin edit" data-href="/catalog/categories">-</a>
+				<br/>
+				<br/>
+				<textarea name="description" id="description" rows="24" style="width: 100%"><?=$this -> form -> description -> getValue()?></textarea>
+				<br/>
+				<br/>
+				Порядок <input type="number" name="order" id="order" value="<?=$this -> form -> order -> getValue()?>">
+				<br/>
+				<br/>
+				<input type="submit" name="submit" id="submit" value="Сохранить">
+			</td>
+		</tr>
+	</table>		
+	
+</form>

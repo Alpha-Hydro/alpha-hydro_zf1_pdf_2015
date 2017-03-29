@@ -1,0 +1,36 @@
+<?php if ( count($this->rowset) > 0 ) : foreach ( $this->rowset as $row ) : ?>
+<div class="item">
+	<?php if( Zend_Auth::getInstance()->hasIdentity() ) : ?>
+		<div class="item-overlay">
+			<a title="Редактировать" href="<?=$this -> url(array("controller"=>"products", "action"=>"edit", 'id' => $row -> id)) ?>" class="admin edit">-</a>
+			<a title="Удалить" href="<?=$this -> url(array("controller"=>"products", "action"=>"delete", 'id' => $row -> id)) ?>" class="admin delete">-</a>
+		</div>
+	<?php endif;?>
+        <?php 
+		if(isset($this->category)){
+			$cat = $this->category->id;
+		}else{
+			$cat = $row->findDependentRowset('Model_DbTable_CategoryXref')->current();
+			$cat = $cat->category_id;
+		}
+	?>
+	<a href="<?=$this->url(array('id'=>$row->id, "category" => $cat, 'action'=>'view', 'controller'=>'products'))?>">
+		<img src="<?=
+		$row->image ? "/files/images/product/$row->image" : 'http://fakeimg.pl/124x124/?text=?'
+		?>" alt="Фотография" />
+		<span class="name"><?=$row->sku?></span>
+	</a>
+</div>
+<?php
+		endforeach;
+ else :
+	?><h2 style="margin-left:60px;">Совпадений не найдено</h2>
+<?php endif;
+?>
+<br clear="all" />
+
+<?php 	if ( Zend_Auth::getInstance()->hasIdentity() ) : ?>
+<a class="admin"
+	href="<?= $this->url(array("controller"=>"products", "action"=>"edit", "id"=>NULL))?>">Создать
+	продукт</a>
+<?php 	endif; ?>

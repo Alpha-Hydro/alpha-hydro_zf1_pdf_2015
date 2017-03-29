@@ -1,0 +1,139 @@
+<div class="for-generating-wrap">
+<?	
+	foreach($this->categories as $cat) {
+		echo $cat['name'].' ('.$cat['id'].')<br/>';
+	}	
+?>
+</div>
+
+	<?
+		$page = 3;
+		if(isset($_POST['page'])) {
+			if(is_numeric($_POST['page'])) {
+				$page = $_POST['page'];
+			}
+		}
+	?>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+
+        Except = new Array();
+        <?php foreach($this->except as $except): ?>
+        Except.push(<?php echo $except ?>);
+        <?php endforeach; ?>
+
+        exceptProducts = new Array();
+        <?php foreach($this->exceptProducts as $except): ?>
+        exceptProducts.push(<?php echo $except ?>);
+        <?php endforeach; ?>
+
+        Categories = new Array();
+        <?php foreach ($this->categories as $category) : $category = (object) $category?>
+          <? if(isset($this -> parents[$category -> parent_id])): ?>
+            Categories.push (new Array("<?=$this -> parents[$category -> parent_id] ?>/<?=$category -> name ?>",<?=$category -> id ?>));
+          <? endif; ?>
+        <? endforeach; ?>
+        function buttonEnable() {
+            $("#startButton").prop("disabled", false);
+        }
+	
+        secondTime = 0;
+        pageFormat = 'A4';
+        print = false;
+        function finishBook() {
+            $.post("/book/index/finishbook", {
+                page : PAGE,
+                startPage: <?=$page?>,
+                pageFormat: pageFormat,
+                print: print
+            }, function(result) {
+                buttonEnable();
+                if(secondTime == 0) {
+                    secondTime = 1;
+                    PAGE = result.page;
+                    $("#startButton").click();
+                }else{
+                    $('#loading').show().html('<a href="/files/pdf/book/catalog.zip">Скачать сгенерированный каталог (zip)</a>');
+                }
+            }, 'json').error(function(post_error) {
+                console.log(post_error);
+                alert("Error occurred");
+                buttonEnable();
+                $('#loading').hide();
+            });
+        }
+
+        function generateCategory(i) {
+
+            if (i > Categories.length - 1) {
+                finishBook();
+                return;
+            }
+
+            $.post("/book/index/bycategory", {
+                    id : Categories[i][1],
+                    page : PAGE,
+                    except: Except,
+                    except_products: exceptProducts,
+                    second_time : secondTime,
+                    pageFormat: pageFormat,
+                    print: print
+                }, function(result) {
+                    console.log(result);
+                    PAGE = result.page;
+                    if(secondTime == 1) {
+                        $("#log").append(Categories[i][0] + " - сгенерировано\n");
+                    } else {
+                        $("#log").append("Расчет нумерации страниц для категории " + Categories[i][0] + " прошел успешно\n");
+                    }
+                    generateCategory(i + 1);
+                }, 'json')
+                .error(function() {
+                    alert("Error occurred");
+                    buttonEnable();
+                    $('#loading').hide();
+                });
+        }
+
+        PAGE = <?=$page?>;
+        $("#startButton").click(function(e) {
+            $.post("/book/index/newbook",
+              {
+                pageFormat:pageFormat,
+                print: print
+              }, function(result) {
+                console.log(result);
+                $("#startButton").prop("disabled", "disabled");
+                $('#loading').show();
+                generateCategory(0);
+
+            }, 'json').error(function() {
+                alert("Error occurred1");
+                buttonEnable();
+                $('#loading').hide();
+            });
+        });
+
+        $('input[name="page_format"]').change(function(){
+            pageFormat = $(this).val();
+        });
+        $('input[name="print"]').change(function(){
+            if($('input[name="print"]').attr('checked') == 'checked'){
+                print = true;
+            }else{
+                print = false;
+            }
+        });
+        $("#log").text("Categories: " + Categories.length + "\n");
+    })
+</script>
+
+<div id="loading" style="display: none;">Loading...</div>
+<h2>Генерация книги</h2>
+<textarea id="log" cols="150" rows="50" readonly="readonly"></textarea>
+<br/>Формат A5 <input type="radio" name="page_format" value="A5"> Формат A4<input type="radio" name="page_format" checked value="A4"> Для печати <input type="checkbox" name="print" >
+<button id="startButton">
+	Генерировать книгу
+</button>

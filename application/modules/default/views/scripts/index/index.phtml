@@ -1,0 +1,62 @@
+<div class="i-block" id="homepage-news-block">
+	<div class="news">
+		<!--<a href="javascript:void(0)" class="news-2-stocks"><img class="corner" src="/images/stock.png" /></a>-->
+		<h2>Новости</h2>
+		
+		<a href="/sections/media#news" class="more">Все новости</a>
+		<div style="clear: both"></div>
+		<a href="/sections/news/id/<?=$this->news->id?>" class="title"><?=$this->news->name?></a><?
+			if ( $this -> news -> thumb ) :
+		?><img
+			src="<?=$this -> news -> thumb?>" alt="<?=$this->news->name?>"
+			class="preview" />
+		<? endif; ?>
+		<div class="description">
+			<?=$this->news->s_content?>
+		</div>
+		<a href="/sections/media#stocks" class="stocks-icon"><img src="/images/stocks-index-icon.png" alt="" /> <span>Акции</span> >></a><br clear="all" />
+	</div>
+	<!--<div class="stocks hidden">
+		<a href="javascript:void(0)" class="news-2-stocks"><img class="corner" src="/images/new.png" /></a>
+		<h2>Акции</h2>
+		
+		<a href="/sections/media#stocks" class="more">Все акции</a>
+		<div style="clear: both"></div>
+		<a href="/sections/news/id/<?=$this->stocks->id?>" class="title"><?=$this->stocks->name?></a><?
+			if ( $this -> stocks -> thumb ) :
+		?><img
+			src="<?=$this -> stocks -> thumb?>" alt="<?=$this->stocks->name?>"
+			class="preview" />
+		<? endif; ?>
+		<div class="description">
+			<?=$this->stocks->s_content?>
+		</div>
+		<a href="/sections/news/id/<?=$this->stocks->id?>" class="view">подробнее &gt;&gt;</a><br clear="all" />		
+	</div>-->
+</div>
+<div class="i-block">
+	<h2>Статьи</h2>
+	<a href="/sections/media#posts" class="more">Все статьи</a>
+	<div style="clear: both"></div>
+	<a href="<?=$this->url(array("controller"=>"sections", "action"=>"post", "id"=>$this->post->id))?>" class="title"><?=$this->post->name?></a>
+	<div class="description">
+		<?=$this->post->s_content?>
+	</div>	
+	<a href="<?=$this->url(array("controller"=>"sections", "action"=>"post", "id"=>$this->post->id))?>" class="view">подробнее &gt;&gt;</a><br clear="all" />
+</div>
+<div class="i-block" id="forum">
+	<h2>Форум</h2>
+	<a href="/forum" class="more">Задать вопрос</a>
+	<div style="clear: both"></div>
+	<div class="question">
+		<span class="name"><?=$this->forum->question->author?> <span class="date">— <?=date("d.m.Y H:i", strtotime($this->forum->question->timestamp))?></span></span>
+		<div class="content"><?= $this->strCrop( $this->forum->question->content) ?></div>
+	</div>
+	<div class="answer">
+		<span class="name"><?=$this->forum->answer->author?> <span class="date">— <?=date("d.m.Y H:i", strtotime($this->forum->answer->timestamp))?></span></span>
+		<div class="content"><?= $this->strCrop( $this->forum->answer->content, 130) ?></div>
+	</div>
+	<br clear="all" />
+	<a href="/forum" class="view">Читать полностью &gt;&gt;</a><br clear="all" />
+</div>
+<br clear="all" />

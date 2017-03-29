@@ -1,0 +1,207 @@
+<?php
+$this->headScript ()->appendFile ( "/scripts/tabs.my.js" );
+if (Zend_Auth::getInstance ()->hasIdentity ()) {
+	$user = Zend_Auth::getInstance ()->getIdentity ();
+	$this->headScript ()->appendFile ( "/scripts/jquery.form.js" );
+	
+	$this->headScript ()->appendFile ( "/scripts/forum.js" )->appendFile ( "/scripts/datepicker/js/datepicker.js" );
+	$this->headLink ()->appendStylesheet ( "/scripts/datepicker/css/datepicker.css" );
+}
+?>
+<table id="section">
+	<tr>
+		<td class="title"><h2>Форум</h2></td>
+		<td class="tabs header"><a href="#faq"><span class="left img">-</span><span
+				class="content">Вопросы и запросы</span><span class="right img">-</span></a>
+			<a href="#reviews"><span class="left img">-</span><span
+				class="content">Отзывы и предложения</span><span class="right img">-</span></a>
+			<a href="#complaints" class="small"><span class="left img">-</span><span
+				class="content">Книга жалоб</span><span class="right img">-</span></a>
+			<a href="#all" class="small"><span class="left img">-</span><span
+				class="content">Все</span><span class="right img">-</span></a></td>
+	</tr>
+	<tr>
+		<td class="tabs content forum" colspan="2" id="media-content">
+			<form action="/forum/ask" method="post" id="forum">
+				<h3>Написать нам:</h3>
+
+				<div class="inline">
+					<label for="author">Имя:</label> <input type="text" name="author"
+						id="author" required="required" /> <label for="email">Е-mail:</label> <input
+						type="text" name="email" id="email" required="required" /> <label for="category">В
+						форум:</label> <select name="category" id="category"
+						style="width: 168px; resize: none;">
+						<option>Вопросы и запросы</option>
+						<option>Отзывы и предложения</option>
+						<option>Книга жалоб</option>
+					</select>
+				</div>
+				<label for="form_content" style="width: auto">Ваш вопрос:</label>
+				<textarea name="content" id="form_content"></textarea>
+
+				<div class="help">* Все поля обязательны для
+					заполнения</div>
+				<input type="submit" value="Отправить" />
+			</form>
+<?php
+$types = array (
+		"faq" => "Вопросы и запросы",
+		"reviews" => "Отзывы и предложения",
+		"complaints" => "Книга жалоб",
+		"all" => "all" 
+);
+foreach ( $types as $tab => $type ) :
+	?>
+	<div id="tab-<?=$tab ?>">
+<?
+	
+	if ($this->isAllowed ( "forum", "answer" ))
+		if (isset ( $this->admin_topics [$type] ))
+			foreach ( $this->admin_topics [$type] as $question ) :
+				?>
+		<div class="topic">
+					<div class="question" data-id=<?php echo $question->id?>>
+						<span class="title"> <span class="name"><?=$question->author; ?><?=Zend_Auth::getInstance()->hasIdentity() ? ' ['.$question -> email.']' : "";?></span>
+							— <span class="date"><?=date ( "d.m.Y", strtotime ( $question->timestamp ) );?></span>
+							<span style="display:block; float: right; margin-right: 26px">
+					<?php if( $this->isAllowed("forum", "edit") ) : ?>
+					<a title="Редактировать" href="javascript:void(0);" class="admin edit">-</a> &nbsp; 
+					<?php endif;?>
+					<? if ( $this->isAllowed("forum", "delete") ) : ?>
+					<a title="Удалить" href="/forum/delete?id=<?=$question->id ?>&tabName=<?=$tab?>&<?=http_build_query($_GET)?>" class="admin delete"
+									style="">-</a>
+					<? endif; ?>
+				</span>
+						</span>
+
+						<div class="content">
+				<?=$question->content; ?>
+				</div>
+						<a href="javascript:void(0)" class="forum-answer">Ответить</a>
+					</div>
+
+					<div class="answer" style="display: none">
+						<span class="title"> <span class="name"><?=$user->name; ?></span>
+							— <span class="date"><?=date("d.m.Y"); ?></span>
+						</span>
+
+						<div class="content">
+							<form method="post" action="/forum/answer?tabName=<?=$tab?>&<?=http_build_query($_GET)?>">
+								<input type="hidden" name="question" value="<?=$question->id?>" />
+								<input title="ответить" type="submit" class="admin save" style="float: right" />
+								<textarea name="answer" class="admin"
+									id="answer_<?=$question->id?>"
+									style="width: 900px; height: 100px;"></textarea>
+							</form>
+						</div>
+					</div>
+				</div>
+<?
+			endforeach
+	;
+	if (isset ( $this->topics [$type] ))
+		foreach ( $this->topics [$type] as $topic ) :
+			$question = $topic ['question'];
+			$answer = $topic ['answers']->getRow ( 0 );
+			?>
+		<div class="topic">
+					<div class="question" data-id=<?php echo $question->id?>>
+						<span class="title"> <span class="name"><?=$question->author; ?><?=Zend_Auth::getInstance()->hasIdentity() ? ' ['.$question -> email.']' : "";?></span>
+							— <span class="date"><?=date ( "d.m.Y", strtotime ( $question->timestamp ) );?></span>
+
+							<span style="display: block; float: right; margin-right: 26px">
+					<?php if( $this->isAllowed("forum", "edit") ) : ?>
+					<a title="Редактировать" href="javascript:void(0);" class="admin edit">-</a> &nbsp; 
+					<?php endif;?>
+					<? if ( $this->isAllowed("forum", "delete") ) : ?>
+					<a title="Удалить" href="/forum/delete?id=<?=$question->id ?>&tabName=<?=$tab?>&<?=http_build_query($_GET)?>" class="admin delete"
+									style="">-</a>
+					<? endif; ?>
+				</span>
+						</span>
+
+						<div class="content">
+				<?=$question->content; ?>
+				</div>
+			</div>
+			
+			
+			<div class="answer" data-id=<?=$answer->id?>>
+				<span class="title"> <span class="name"><?=$answer->author; ?><?=Zend_Auth::getInstance()->hasIdentity() ? ' ['.$answer -> email.']' : "";?></span> — <span class="date"><?=date("d.m.Y", strtotime($answer->timestamp)); ?></span>
+				<? if (Zend_Auth::getInstance()->hasIdentity()) : ?>
+				<span style="display: block; float: right; margin-right: 26px">
+					<?php if( $this->isAllowed("forum", $answer->email == $user->email ? "edit-own": "edit") ) : ?>
+					<a href="javascript:void(0);" class="admin edit">-</a> &nbsp;
+					<?php endif; ?>
+					<?php if( $this->isAllowed("forum", "delete") ) : ?>
+					<a href="/forum/delete?id=<?=$answer->id ?>&tabName=<?=$tab?>&<?=http_build_query($_GET)?>" class="admin delete">-</a>
+					<?php endif; ?>
+				</span>
+				<? endif; ?>			
+				</span>
+
+				<div class="content">
+				<?=$answer->content; ?>
+				</div>
+				<?php if( count($topic['answers'])==1 && $this->isAllowed("forum", "answer") ) : ?>
+					<a href="javascript:void(0)" class="forum-answer">Ответить</a>
+				<?php endif; ?>				
+				
+				</div>
+			
+			<? foreach ( $topic['answers'] as $i=>$answer ) if ( $i != 0 ) : $isLast = $i == count($topic['answers'])-1 ?>
+				<div class="answer" data-id=<?=$answer->id?>
+						style="margin-left: 50px;">
+						<span class="title"> <span class="name"><?=$answer->author; ?><?=Zend_Auth::getInstance()->hasIdentity() ? ' ['.$answer -> email.']' : "";?></span>
+							— <span class="date"><?=date("d.m.Y", strtotime($answer->timestamp)); ?></span>
+					<? if (Zend_Auth::getInstance()->hasIdentity()) : ?>
+					<span style="display: block; float: right; margin-right: 26px">
+						<?php if( $this->isAllowed("forum", $answer->email == $user->email ? "edit-own": "edit") ) : ?>
+						<a href="javascript:void(0);" class="admin edit">-</a> &nbsp;
+						<?php endif;?>
+						<?php if( $this->isAllowed("forum", "delete") ) : ?>
+						<a href="/forum/delete?id=<?=$answer->id ?>&tabName=<?=$tab?>&<?=http_build_query($_GET)?>" class="admin delete">-</a>
+						<?php endif; ?>
+					</span>
+					<? endif; ?>			
+					</span>
+
+					<div class="content"><?=$answer->content; ?></div>
+					
+					<?php if( $isLast && $this->isAllowed("forum", "answer") ) : ?>
+					<a href="javascript:void(0)" class="forum-answer">Ответить</a>
+					<?php endif; ?>
+					</div>
+			<? endif; ?>
+			
+				<div class="answer" style="margin-left: 50px; display: none">
+						<span class="title"> <span class="name"><?=$user->name; ?></span>
+							— <span class="date"><?=date("d.m.Y"); ?></span>
+						</span>
+
+						<div class="content">
+							<form method="post" action="/forum/answer?tabName=<?=$tab?>&<?=http_build_query($_GET)?>">
+								<input type="hidden" name="question" value="<?=$question->id ?>" />
+								<input title="ответить" type="submit" class="admin save" style="float: right" />
+								<textarea name="answer" class="admin"
+									id="answer_<?=$question->id ?>"
+									style="width: 850px; height: 100px;"></textarea>
+							</form>
+						</div>
+					</div>
+				</div>
+	<? endforeach; ?>
+	
+	<?php
+	echo $this->partial ( "forum/paginator.phtml", array (
+			"tab" => $tab,
+			"page" => $this->pages [$type],
+			"last" => intval ( $this->lasts [$type] ) + 1 
+	) );
+	?>
+	
+	</div>
+<? endforeach; ?>
+</td>
+	</tr>
+</table>

@@ -1,0 +1,63 @@
+<product>
+	<action>/products/edit</action>
+	<method>POST</method>
+	<name>product</name>
+	<elements>
+		<sku>
+			<type>text</type>
+			<options>
+				<label>SKU</label>
+				<required>true</required>
+			</options>
+		</sku>
+		<image>
+			<type>file</type>
+			<options>
+				<label>Image</label>
+			</options>
+		</image>
+		
+		<name>
+			<type>text</type>
+			<options>
+				<label>Title</label>
+				<required>true</required>
+			</options>
+		</name>
+		
+		<s_name>
+			<type>text</type>
+			<options>
+				<label>Search name</label>
+			</options>
+		</s_name>
+		
+		<note>
+			<type>text</type>
+			<options>
+				<label>Note</label>
+			</options>
+		</note>
+		
+		<description>
+			<type>textarea</type>
+			<options>
+				<label>Description</label>
+			</options>
+		</description>
+		
+		<order>
+			<type>text</type>
+			<options>
+				<label>Order</label>
+			</options>
+		</order>
+		
+		<submit>
+			<type>submit</type>
+			<options>
+				<label>Save</label>
+			</options>
+		</submit>
+	</elements>
+</product>

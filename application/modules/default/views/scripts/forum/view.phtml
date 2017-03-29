@@ -1,0 +1,13 @@
+<? $answer = $this -> answer; ?>
+<span class="title"> <span class="name"><?=$answer->author; ?></span>
+— <span class="date"><?=date("d.m.Y", strtotime($answer->timestamp)); ?></span>
+<? if (Zend_Auth::getInstance()->hasIdentity()) : ?>
+<span style="display: block; float: right; margin-right: 26px">
+	<a href="javascript:void(0);" class="admin edit">-</a> &nbsp;
+	<a href="/forum/delete?id=<?=$answer->id ?>" class="admin delete">-</a>
+</span>
+<? endif; ?>			
+</span>
+<div class="content">
+<?=$answer->content; ?>
+</div>	

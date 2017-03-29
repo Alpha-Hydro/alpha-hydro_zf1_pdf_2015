@@ -1,0 +1,285 @@
+<div class="side_block">
+        <h3>Конвертер величин</h3>
+    <script language="JavaScript">
+    
+    function change( val ) {
+	
+	$('div.side_block').find('#pressure,#length,#capacity,#weight,#mass,#moment,#speed,#exp,#temper').css('display','none');
+        $('#'+$(val).val()).css('display','block');
+	
+    }
+   
+    function convert( select ) {
+        var a=document.getElementById('unit1'+$(select).attr('data-pref')).value;
+        var b=document.getElementById('unit2'+$(select).attr('data-pref')).value;
+        var c=document.getElementById('value'+$(select).attr('data-pref')).value;  
+        var res=Math.round(((c*a)/b)*100)/100;
+        document.getElementById('res'+$(select).attr('data-pref')).value = res;
+        return res;
+    }
+    function convert1() {	
+        var a=document.getElementById('unit1_temper').value;
+        var b=document.getElementById('unit2_temper').value;
+        var c=document.getElementById('value_temper').value;  
+        var res;
+        if (a=='c' && b=='c'){res=c;}
+        if (a=='c' && b=='f'){res=((Math.round(c*9*100/5))/100)+32;}
+        if (a=='c' && b=='k'){res=(c+273.1)*1;}
+        if (a=='f' && b=='c'){res=((Math.round(5*100/9))/100)*(c-32);}
+        if (a=='f' && b=='f'){res=c;}
+        if (a=='f' && b=='k'){res=(c+457.87)*1;}
+        if (a=='k' && b=='c'){res=c-273.1;}
+        if (a=='k' && b=='f'){res=c-457.87;}
+        if (a=='k' && b=='k'){res=c;}
+        document.getElementById('res_temper').value = res;
+        return res;
+    }
+   
+</script>
+
+<div id="measure" style="margin-left: 0px; margin-top: -10px;">
+    <table>
+        <tbody><tr>
+
+			<td>
+				<div class="measure_g">
+					<select id="cb" name="cb" onchange="change(this)">
+					    <option value="pressure">Давление</option>
+					    <option value="length">Длина</option>
+					    <option value="capacity">Объем</option>
+					    <option value="weight">Вес</option>
+					    <option value="mass">Масса</option>
+					    <option value="moment">Крутящий момент</option>
+					    <option value="speed">Скорость</option>
+					    <option value="exp">Расход</option>
+
+					    <option value="temper">Температура</option>
+					</select></div>
+				</div>
+            </td>
+        </tr>
+    </tbody></table>
+
+    <div id="pressure">
+        <table>
+            <tbody><tr><td><input type="text" id="value_pre" size="10" name="value_pre" value="100"></td>
+                <td><div class="measure"><select id="unit1_pre" name="unit1" data-pref="_pre" onchange="convert(this); return 1;">
+                        <option value="1">бар</option>
+                        <option value="0.001">мбар</option>
+                        <option value="0.000001">мкбар</option>
+
+                        <option value="0.00001">Па</option>
+                        <option value="0.01">кПа</option>
+                        <option value="10">МПа</option>
+                        <option value="0.00133322">мм рт.ст</option>
+                        <option value="0.0000980665">мм вод.ст</option>
+                        <option value="0.0980665">м вод.ст</option>
+                        <option value="98.0665">кг/мм2</option>
+                        <option value="0.980665">кг/cм2</option>
+
+                        <option value="1.01325">атм</option>
+                        <option value="0.06894887">psi</option>
+                    </select></div>
+                </td></tr>
+            <tr><td><input type="text" size="10" value="98.69" id="res_pre" name="res_pre" readonly=""></td>
+                <td><div class="measure"><select id="unit2_pre" name="unit2" data-pref="_pre" onchange="convert(this); return 1;">
+                        <option value="1">бар</option>
+                        <option value="0.001">мбар</option>
+                        <option value="0.000001">мкбар</option>
+                        <option value="0.00001">Па</option>
+                        <option value="0.01">кПа</option>
+
+                        <option value="10">МПа</option>
+                        <option value="0.00133322">мм рт.ст</option>
+                        <option value="0.0000980665">мм вод.ст</option>
+                        <option value="0.0980665">м вод.ст</option>
+                        <option value="98.0665">кг/мм2</option>
+                        <option value="0.980665">кг/cм2</option>
+                        <option value="1.01325" selected="">атм</option>
+                        <option value="0.06894887">psi</option>
+
+                    </select></div>
+                </td></tr>
+        </tbody></table>
+    </div>
+
+    <div id="length" style="display: none;">
+        <table>
+            <tbody><tr><td><input type="text" id="value_length" size="10" name="value_length" value="100" ></td>
+                <td><div class="measure"><select id="unit1_length" name="unit1_length" data-pref="_length" onchange="convert(this); return 1;">
+                        <option value="1">м</option>
+                        <option value="0.0254">дюйм</option>
+                        <option value="0.001">мм</option>
+                        <option value="0.3048">фут</option>
+
+                    </select></div>
+                </td></tr>
+            <tr><td><input type="text" size="10" value="328.08" id="res_length" name="res_length" readonly=""></td>
+                <td><div class="measure"><select id="unit2_length" name="unit2" data-pref="_length" onchange="convert(this); return 1;">
+                        <option value="1">м</option>
+                        <option value="0.0254">дюйм</option>
+                        <option value="0.001">мм</option>
+                        <option value="0.3048" selected="">фут</option>
+                    </select></div>
+                </td></tr>
+        </tbody></table>
+    </div>
+
+    <div id="capacity" style="display: none;">
+        <table>
+            <tbody><tr><td><input type="text" id="value_cap" size="10" name="value_cap" value="100" ></td>
+                <td><div class="measure"><select id="unit1_cap" name="unit1" data-pref="_cap" onchange="convert(this); return 1;">
+                        <option value="1">л</option>
+                        <option value="1000">м3</option>
+                        <option value="4.54">gal (UK)</option>
+                        <option value="37.85">gal (US)</option>
+                    </select></div>
+                </td></tr>
+            <tr><td><input type="text" size="10" value="26.42" id="res_cap" name="res_cap" readonly=""></td>
+                <td><div class="measure"><select id="unit2_cap" name="unit2" data-pref="_cap" onchange="convert(this); return 1;">
+
+                        <option value="1">л</option>
+                        <option value="1000">м3</option>
+                        <option value="4.54">gal (UK)</option>
+                        <option value="3.785" selected="">gal (US)</option>
+                    </select></div>
+                </td></tr>
+        </tbody></table>
+    </div>
+
+    <div id="weight" style="display: none;">
+        <table>
+            <tbody><tr><td><input type="text" id="value_weight" size="10" name="value_weight" value="100" ></td>
+
+                <td><div class="measure"><select id="unit1_weight" name="unit1" data-pref="_weight" onchange="convert(this); return 1;">
+                        <option value="1">кг</option>
+                        <option value="0.454">lb (фунт)</option>
+                    </select></div>
+                </td></tr>
+            <tr><td><input type="text" size="10" value="220.26" id="res_weight" name="res_weight" readonly=""></td>
+                <td><div class="measure"><select id="unit2_weight" name="unit2" data-pref="_weight" onchange="convert(this); return 1;">
+                        <option value="1">кг</option>
+                        <option value="0.454" selected="">lb (фунт)</option>
+                    </select></div>
+                </td></tr>
+        </tbody></table>
+    </div>
+
+    <div id="mass" style="display: none;">
+        <table>
+            <tbody><tr><td><input type="text" id="value_mass" size="10" name="value_mass" value="100" ></td>
+                <td><div class="measure"><select id="unit1_mass" name="unit1" data-pref="_mass" onchange="convert(this); return 1;">
+                        <option value="1">кг</option>
+                        <option value="0.001">г</option>
+                        <option value="102">кН</option>
+                        <option value="0.000001">мг</option>
+                        <option value="1000">т</option>
+                        <option value="100">ц</option>
+
+                        <option value="0.0002">карат</option>
+                        <option value="1000000">кт</option>
+                    </select></div>
+                </td></tr>
+            <tr><td><input type="text" size="10" value="0.1" id="res_mass" name="res_mass" readonly=""></td>
+                <td><div class="measure"><select id="unit2_mass" name="unit2" data-pref="_mass" onchange="convert(this); return 1;">
+                        <option value="1">кг</option>
+                        <option value="0.001">г</option>
+                        <option value="102">кН</option>
+                        <option value="0.000001">мг</option>
+                        <option value="1000" selected="">т</option>
+
+                        <option value="100">ц</option>
+                        <option value="0.0002">карат</option>
+                        <option value="1000000">кт</option>
+                    </select></div>
+                </td></tr>
+        </tbody></table>
+    </div>
+
+    <div id="moment" style="display: none;">
+        <table>
+            <tbody><tr><td><input type="text" id="value_moment" size="10" name="value_moment" value="100" ></td>
+                <td><div class="measure"><select id="unit1_moment" name="unit1" data-pref="_moment" onchange="convert(this); return 1;">
+                        <option value="1">Н*м</option>
+
+                        <option value="1.356">lb*ft</option>
+                    </select></div>
+                </td></tr>
+            <tr><td><input type="text" size="10" value="73.75" id="res_moment" name="res_moment" readonly=""></td>
+                <td><div class="measure"><select id="unit2_moment" name="unit2" data-pref="_moment" onchange="convert(this); return 1;">
+                        <option value="1">Н*м</option>
+                        <option value="1.356" selected="">lb*ft</option>
+                    </select></div>
+                </td></tr>
+        </tbody></table>
+    </div>
+
+    <div id="speed" style="display: none;">
+        <table>
+
+            <tbody><tr><td><input type="text" id="value_speed" size="10" name="value_speed" value="100"></td>
+                <td><div class="measure"><select id="unit1_speed" name="unit1" data-pref="_speed" onchange="convert(this); return 1;">
+                        <option value="0.3048">ft/s</option>
+                        <option value="1">м/с</option>
+                    </select></div>
+                </td></tr>
+            <tr><td><input type="text" size="10" value="30.48" id="res_speed" name="res_speed" readonly=""></td>
+                <td><div class="measure"><select id="unit2_speed" name="unit2" data-pref="_speed" onchange="convert(this); return 1;">
+                        <option value="0.3048">ft/s</option>
+                        <option value="1" selected="">м/с</option>
+                    </select></div>
+                </td></tr>
+        </tbody></table>
+
+    </div>
+
+    <div id="exp" style="display: none;">
+        <table>
+            <tbody><tr><td><input type="text" id="value_exp" size="10" name="value_exp" value="100"  ></td>
+                <td><div class="measure"><select id="unit1_exp" name="unit1" data-pref="_exp" onchange="convert(this); return 1;">
+                        <option value="4.54596">gal/min (UK)</option>
+                        <option value="1">л/мин</option>
+                        <option value="3.78533">gal/min (US)</option>
+                    </select></div>
+                </td></tr>
+            <tr><td><input type="text" size="10" value="120.09" id="res_exp" name="res_exp" readonly=""></td>
+                <td><div class="measure"><select id="unit2_exp" name="unit2" data-pref="_exp" onchange="convert(this); return 1;">
+                        <option value="4.54596">gal/min (UK)</option>
+
+                        <option value="1">л/мин</option>
+                        <option value="3.78533" selected="">gal/min (US)</option>
+                    </select></div>
+                </td></tr>
+        </tbody></table>
+    </div>
+
+    <div id="temper" style="display: none;">
+        <table>
+            <tbody><tr><td><input type="text" id="value_temper" size="10" name="value_temper" value="0" ></td>
+                <td><div class="measure"><select id="unit1_temper" name="unit1" data-pref="_temper" onchange="convert(this); return 1;">
+                        <option value="c">C</option>
+                        <option value="f">F</option>
+
+                        <option value="k">K</option>
+                    </select></div>
+                </td></tr>
+            <tr><td><input type="text" size="10" value="273.1" id="res_temper" name="res_temper" readonly=""></td>
+                <td><div class="measure"><select id="unit2_temper" name="unit2" data-pref="_temper" onchange="convert(this); return 1;">
+                        <option value="c">C</option>
+                        <option value="f">F</option>
+                        <option value="k" selected="">K</option>
+                    </select></div>
+                </td></tr>
+        </tbody></table>
+    </div>
+</div>
+    </div>
+
+
+
+ <script>
+ $('#measure input').on('keyup', function(){
+	select = $(this).parent().next().find('select');
+	convert(select);
+ })
+  </script>

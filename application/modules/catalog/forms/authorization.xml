@@ -1,0 +1,30 @@
+<login>
+	<action>/users/authorize</action>
+	<method>POST</method>
+	<name>login</name>
+	
+	<elements>
+		<email>
+			<type>text</type>
+			<options>
+				<label>Email</label>
+				<required>true</required>
+			</options>			
+		</email>
+						
+		<password>
+			<type>password</type>
+			<options>
+				<label>Password</label>
+				<required>true</required>
+			</options>
+		</password>	
+		
+		<submit>
+			<type>submit</type>
+			<options>
+				<label>Login</label>
+			</options>
+		</submit>						
+	</elements>
+</login>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" href="/favicon.png" />
+		<?php
+		echo $this->headMeta ();
+		echo $this->headTitle ( "Альфа-Гидро" );
+		echo $this->headScript ()-> prependFile ( "/scripts/jquery-1.8.1.min.js" );
+		echo $this->headLink ()->appendStylesheet ( 'http://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,cyrillic' )->appendStylesheet ( '/css/application.css' );
+		?>
+	</head>
+<body>
+	<? echo $this->partial("components/adminZone.phtml")?>
+	<div id="page">
+		<div id="header">
+			<!-- HEADER -->
+			<? echo $this->partial("components/_header.phtml")?>
+			<!-- HEADER -->
+	
+			<h1 class="section-title" id="production">
+				<?php echo Zend_Registry::isRegistered('oil') ? Zend_Registry::get("oil") : 'Масла';
+				if ( $this->isAllowed("page", "edit") ) :
+					if ( Zend_Controller_Front::getInstance()->getRequest()->getParam("action") == "oil-edit") : ?>
+						<input title="сохранить" type="submit" name="submit" class="admin save" onclick="$('#oil-edit input:first').click()" />
+					<? else :?>
+					<a title="редактировать" href="/sections/oil-edit<?=Zend_Registry::isRegistered('post-id') ? '?id='.Zend_Registry::get('post-id') : ''?>" class="admin edit" style="line-height: 11px">-</a>
+					<? endif; ?>
+				<? endif; ?>
+			</h1>
+			<br clear="all" />
+		</div>
+		<div>
+			<? if ( $this->isAllowed("page", "edit") &&
+				Zend_Controller_Front::getInstance()->getRequest()->getParam("action") == "oil-edit" ) : ?>
+			<form method="post" id="oil-edit"><input type="submit" style="display: none" />
+			<? endif;
+			
+			echo $this->layout()->content;
+			
+			if ( $this->isAllowed("page", "edit") &&
+				Zend_Controller_Front::getInstance()->getRequest()->getParam("action") == "oil-edit" ) : ?>
+			</form>
+			<? endif;?>				
+			<div id="pre-footer"></div> 
+		</div>		
+	</div>
+	
+	<? echo $this->partial("components/_footer.phtml") ?>
+	
+	<?php
+	echo $this -> headScript () -> prependFile ( "/scripts/less-1.3.0.min.js" )
+								-> prependFile ( "/scripts/jquery-1.8.1.min.js" )
+								-> appendFile ( "/scripts/mainmenu.js" )
+								-> appendFile ( "/scripts/scripts.js" );
+	?>
+</body>
+</html>

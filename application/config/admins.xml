@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<users>
+	<user1>
+		  <name>Людмила А.</name>
+		  <fullname>Адаховская Людмила Александровна</fullname>
+		  <role>moderator</role>
+		  <email>ala@alpha-hydro.com</email>
+		  <password>15ccddb5db3d2208b1823bf593063325995a4e95</password>
+      </user1>
+
+	<user2>
+		  <name>Яна Б.</name>
+		  <fullname>Баранова Яна Андреевна</fullname>
+		  <role>moderator</role>
+		  <email>bya@alpha-hydro.com</email>
+		  <password>b749813d9906f851e79bb59144d8ab6a1c1aa848</password>
+      </user2>
+
+	<user3>
+		  <name>Виктор Б.</name>
+		  <fullname>Блинов Виктор Александрович</fullname>
+		  <role>moderator</role>
+		  <email>bva@alpha-hydro.com</email>
+		  <password>b37ea901df2c93fc4bf066244a6b2d14f63466a1</password>
+      </user3>
+
+	<user4>
+		  <name>Иван Б.</name>
+		  <fullname>Буздин Иван Николаевич</fullname>
+		  <role>moderator</role>
+		  <email>bin@alpha-hydro.com</email>
+		  <password>972ac986b3decc9477fbd20c0d4b626713250ff6</password>
+      </user4>
+      
+	<user5>
+		  <name>Виталий Б.</name>
+		  <fullname>Булатов Виталий Евгеньевич</fullname>
+		  <role>moderator</role>
+		  <email>bve@alpha-hydro.com</email>
+		  <password>237002f43716a36a0b488b43d220632de6412378</password>
+      </user5>
+      
+
+	<user6>
+		  <name>Павел В.</name>
+		  <fullname>Васильев Павел Андреевич</fullname>
+		  <role>moderator</role>
+		  <email>vpa@alpha-hydro.com</email>
+		  <password>660b262841b1265accd09bed5d64d5c88d595fbb</password>
+      </user6>
+	
+	<user7>
+		  <name>Илья Г.</name>
+		  <fullname>Глейников Илья Анатольевич</fullname>
+		  <role>moderator</role>
+		  <email>gia@alpha-hydro.com</email>
+		  <password>3eef22479b8ad7a18ba7cff08062ca158adbccf9</password>
+      </user7>	
+	
+	<user8>
+		  <name>Павел Г.</name>
+		  <fullname>Гришин Павел Вячеславович</fullname>
+		  <role>moderator</role>
+		  <email>gpv@alpha-hydro.com</email>
+		  <password>49cf0bbedbce15734138c08238454df8ff99a63e</password>
+      </user8>	
+	
+	<user9>
+		  <name>Алексей Г.</name>
+		  <fullname>Гусев Алексей</fullname>
+		  <role>moderator</role>
+		  <email>gas@alpha-hydro.com</email>
+		  <password>c656950c2ffdd933efc9a7d166cdb942cafd0461</password>
+      </user9>	
+	
+	<user10>
+		  <name>Алексей З.</name>
+		  <fullname>Золотарев Алексей Георгиевич</fullname>
+		  <role>moderator</role>
+		  <email>zag@alpha-hydro.com</email>
+		  <password>fff14229b17b402304b00a3a9c2fdf818fd453ff</password>
+      </user10>
+      
+ 	<user11>
+		  <name>Максим К.</name>
+		  <fullname>Крюков Максим Анатольевич</fullname>
+		  <role>administrator</role>
+		  <email>kma@alpha-hydro.com</email>
+		  <password>39c72b0076070a8ffe7e6c3c4b98762ca134c423</password>
+      </user11>
+      
+      
+     <user12>
+		  <name>Станислав Л.</name>
+		  <fullname>Лебедев Станислав Сергеевич</fullname>
+		  <role>moderator</role>
+		  <email>lss@alpha-hydro.com</email>
+		  <password>238cf760a0f1815816b2df390d5fa05c2ff52d91</password>
+      </user12>
+      
+      
+        <user13>
+		  <name>Александра Л.</name>
+		  <fullname>Лебедева Александра Сергеевна</fullname>
+		  <role>moderator</role>
+		  <email>las@alpha-hydro.com</email>
+		  <password>0e6495af9f2cbe93596b53ee721d5aebf3280111</password>
+      </user13>
+
+        <user14>
+		  <name>Дарья Л.</name>
+		  <fullname>Лихобабина Дарья Васильевна</fullname>
+		  <role>moderator</role>
+		  <email>ldv@alpha-hydro.com</email>
+		  <password>78815176215f4b7d9fa3df77b2c7c694c876e467</password>
+      </user14>
+      
+        <user15>
+		  <name>Алексей М.</name>
+		  <fullname>Манукян Алексей Юрьевич </fullname>
+		  <role>moderator</role>
+		  <email>mau@alpha-hydro.com</email>
+		  <password>13ef69c4cef7366eecd385ffa01e677a47e954e6</password>
+      </user15>      
+      
+         <user16>
+		  <name>Наталья М.</name>
+		  <fullname>Маняхина Наталья Олеговна</fullname>
+		  <role>moderator</role>
+		  <email>mno@alpha-hydro.com</email>
+		  <password>7174abd3027e4c5b568fe2df63051309e5037a1b</password>
+      </user16>
+ 
+         <user17>
+		  <name>Алексей О.</name>
+		  <fullname>Орлов Алексей Станиславович</fullname>
+		  <role>moderator</role>
+		  <email>oas@alpha-hydro.com</email>
+		  <password>a650134dde1d2d476d1f736635a386a35fbaf3f6</password>
+      </user17>     
+      
+        <user18>
+		  <name>Екатерина С.</name>
+		  <fullname>Серафимович Екатерина Николаевна</fullname>
+		  <role>moderator</role>
+		  <email>sen@alpha-hydro.com</email>
+		  <password>f2cdc15770663526fbe0c716b6e1f6c6f8f47391</password>
+      </user18>      
+      
+         <user19>
+		  <name>Михаил С.</name>
+		  <fullname>Скрипачев Михаил Андреевич</fullname>
+		  <role>moderator</role>
+		  <email>sma@alpha-hydro.com</email>
+		  <password>768bf504c5fcb752aed1eacb30f81f17df3da477</password>
+      </user19>
+      
+        <user20>
+		  <name>Владимир У.</name>
+		  <fullname>Уханов Владимир Сергеевич</fullname>
+		  <role>moderator</role>
+		  <email>uvs@alpha-hydro.com</email>
+		  <password>3ebd1e8d28ee21580f92dec5e2a4ac8ed192bbdc</password>
+      </user20>      
+      
+      
+      <user21>
+		  <name>Мария У.</name>
+		  <fullname>Уханова Мария Леонидовна </fullname>
+		  <role>moderator</role>
+		  <email>uml@alpha-hydro.com</email>
+		  <password>a7be0feab221143370456fa5c2799bf17b24279a</password>
+      </user21>  
+      
+       <user22>
+		  <name>Роман Ф.</name>
+		  <fullname>Федонов Роман Александрович</fullname>
+		  <role>administrator</role>
+		  <email>fra@alpha-hydro.com</email>
+		  <password>6155909ca8b73ade2946f581a021f7066b076a4c</password>
+      </user22>  
+      
+      <user23>
+		  <name>Виктор Ш.</name>
+		  <fullname>Шубин Виктор Владимирович</fullname>
+		  <role>moderator</role>
+		  <email>svv@alpha-hydro.com</email>
+		  <password>7aee5df83d93cb1069dd5fe789f5ded8f26c8f3b</password>
+      </user23>  
+      
+      <user24>
+		  <name>Antares-Labs</name>
+		  <fullname></fullname>
+		  <role>administrator</role>
+		  <email>info@antares-labs.ru</email>
+		  <password>71f8e7976e4cbc4561c9d62fb283e7f788202acb</password>
+      </user24>  
+	  
+	  <user25>
+		  <name>Сергей П.</name>
+		  <fullname>Петров Сергей Викторович</fullname>
+		  <role>moderator</role>
+		  <email>psv@alpha-hydro.com</email>
+		  <password>b4a403ab9e1051235ecf997f94f48479ee7b2542</password>
+      </user25> 
+      
+	  <user26>
+		  <name>Admin</name>
+		  <fullname>Admin</fullname>
+		  <role>administrator</role>
+		  <email>admin@alpha-hydro.com</email>
+		  <password>67fcec2d8b3131d82c13f68c9f7475c89454dbe7</password>
+      </user26>
+
+</users>
+

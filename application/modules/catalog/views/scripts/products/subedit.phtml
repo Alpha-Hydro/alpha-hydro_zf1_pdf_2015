@@ -1,0 +1,75 @@
+<?php // $this-> headScript() -> captureStart(); ?>
+<script>$(function (){
+
+        // добавление параметра
+        $("#addParam").click(function(){
+            var i = $("#productparams tr:last").prev().find("input:first").data("index");
+            if ( i == undefined ) i = 0;
+            else i++;
+
+            $('<tr>' +
+            '<td><span class="params-name"><input data-index="'+i+'" name="productparams['+i+'][name]" value="" style="width: 90%;"/></span></td>' +
+            '<td><span class="params-value"><textarea name="productparams['+i+'][value]" rows="1" style="width: 95%"></textarea></span></td>' +
+            '<td><input type="hidden" value="" name="productparams['+i+'][param_id]">' +
+            '<span class="params-order"><input type="number" class="number" value="'+(i+1)+'" name="productparams['+i+'][order]"></span></td>' +
+            '<td><a href="javascript:;" class="param_delete">удалить</a></td>' +
+            '</tr>').insertBefore( $(this).parent().parent() );
+        });
+
+        // удаление строки параметра
+        $(".param_delete").live("click", function(){
+            $(this).parent().parent().remove();
+        });
+
+    });
+</script>
+<?php //$this -> headScript() -> captureEnd(); ?>
+<!-- @TODO Интегрировать этот блок стилей в основной CSS! -->
+<style type="text/css">
+    form#product input.wide {width: 600px;}
+    form#product input.number {width: 50px;}
+    form#product textarea.wide {width: 100%;}
+    form#product div.clear {clear: both;}
+    form#product label {display: block;}
+    form#product div.p-categories {margin: 20px 0;}
+    table#productparams tr:hover {background-color: #fbeed5;}
+    table#productparams th {background-color: #cacaca;}
+
+</style>
+<form id="product" name="product" enctype="multipart/form-data" action="<?=$this->url()?>" method="post">
+    <label for="sku">Код товара: </label><input type="text" name="sku" id="sku" value="<?=$this->newproduct->sku->getValue();?>" placeholder="SKU" title="SKU" class="wide"><br/>
+    <label for="name">Наименование: </label><input type="text" name="name" id="name" value="<?=$this->newproduct->name->getValue()?>" placeholder="Название" class="wide">
+    <div class="clear"></div>
+    <label for="order">Порядок: </label><input type="number" name="order" id="order" value="<?=$this->newproduct->order->getValue()?>" class="number">
+
+    <h3 align="center">Параметры товарной модификации</h3>
+    <p style="color: red">Удаление параметра в данной модификации, изменение порядка или названия, приведет к соответствующему изменению во всех товарных модификациях родительского товара</p>
+    <table id="productparams" style="width: 100%" cellpadding="2">
+        <tr>
+            <th>Название</th>
+            <th>Значение</th>
+            <th>Порядок</th>
+            <th></th>
+        </tr>
+        <?php foreach ($this->productParams as $i=>$param) :
+            ?>
+            <tr>
+                <td><span class="params-name">
+							<input data-index="<?=$i?>" name="productparams[<?=$i?>][name]" value="<?=$param->name ?>" style="width: 90%;"/>
+						</span></td>
+                <td><span class="params-value">
+							<textarea name="productparams[<?=$i?>][value]" rows="1" style="width: 95%"><?= isset($param->value)?htmlspecialchars($param->value):"" ?></textarea>
+						</span></td>
+                <td><span class="params-order">
+							<input type="hidden" value="<?= isset($param->param_id)?($param->param_id):$param->id ?>" name="productparams[<?=$i?>][param_id]">
+							<input type="number" class="number" value="<?=$param->order?>" name="productparams[<?=$i?>][order]">
+						</span></td>
+                <td><a href="javascript:;" class="param_delete">удалить</a></td>
+            </tr>
+        <?php endforeach; ?>
+        <tr><td align="center" colspan="4"><a href="javascript:;" id="addParam">Добавить параметр</a></td></tr>
+    </table>
+    <br/>
+    <input type="submit" name="submit" id="submit" value="Сохранить">
+    <input type="button" name="back" id="back" value="Отмена" onclick="window.location = '<?=$this->url(array("parent_id"=>NULL,"subid"=>NULL, "id"=>$this->row->parent_id))?>'">
+</form>

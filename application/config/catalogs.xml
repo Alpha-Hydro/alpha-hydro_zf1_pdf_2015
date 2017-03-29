@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+  <catalog>
+    <name>&#171;&#1043;&#1080;&#1076;&#1088;&#1072;&#1074;&#1083;&#1080;&#1082;&#1072;&#187;</name>
+    <preview>/files/catalogs/icon_catalog.jpg</preview>
+    <file>/files/catalogs/Catalog_alpha-hydro_2013-10-16.pdf</file>
+  </catalog>
+</zend-config>

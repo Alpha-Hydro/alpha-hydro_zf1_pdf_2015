@@ -1,0 +1,27 @@
+<div class="pagination">
+<?php if ( $this->page == 1 ) : ?>
+	<span class="first">&lt;</span>
+<?php else : ?>
+	<a class="first" href="?<?=$this->getBuilder( array($this->tab=>max(array($this->page-18, 1))) ) ?>#<?=$this->tab?>">&lt;</a>
+<?php endif; ?>
+<?php
+if ( $this->page == $this->last )
+	$min = max(array($this->page-9, 1));
+else
+	$min = max(array($this->page-5, 1)); 
+?>
+
+<?php for ( $p = $min; $p <= min($min+9, $this->last); $p++) : ?>
+	<?php if ( $p == $this->page) : ?>
+		<span><?=$p?></span>
+	<?php else : ?>
+		<a href="?<?=$this->getBuilder( array($this->tab=>$p) ) ?>#<?=$this->tab?>"><?=$p?></a>
+	<?php endif; ?>
+<?php endfor; ?>
+
+<?php if ( $this->page == $this->last ) : ?>
+	<span class="last">&gt;</span>
+<?php else : ?>
+	<a class="last" href="?<?=$this->getBuilder( array($this->tab=>min(array($this->page+18, $this->last))) ) ?>#<?=$this->tab?>">&gt;</a>
+<?php endif; ?>
+</div>

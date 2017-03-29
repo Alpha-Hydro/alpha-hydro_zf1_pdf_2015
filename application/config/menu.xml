@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <products>
+        <label>Продукция</label>
+        <module>catalog</module>
+        <controller>index</controller>
+        <route>default</route>
+    </products>
+    <production>
+        <label>Производство</label>
+        <module>default</module>
+        <controller>sections</controller>
+        <action>production</action>
+        <route>default</route>
+    </production>	
+    <pipeline>
+        <label>Трубопроводная арматура</label>
+        <module>default</module>
+        <controller>sections</controller>
+        <action>pipeline</action>
+        <route>default</route>
+    </pipeline>
+    <oils>
+        <label>Масла</label>
+        <module>default</module>
+        <controller>sections</controller>
+        <action>oil</action>
+        <route>default</route>
+    </oils>            
+    <forum>
+        <label>Форум</label>
+        <module>default</module>
+        <controller>forum</controller>
+        <route>default</route>
+    </forum>             
+    <media>
+        <label>Пресса</label>
+        <module>default</module>
+        <controller>sections</controller>
+        <action>media</action>
+        <route>default</route>
+    </media>           
+	<aboutus>
+        <label>О нас</label>
+        <module>default</module>
+        <controller>index</controller>
+        <action>about</action>
+        <route>default</route>
+    </aboutus>	
+    <contacts>
+        <label>Контакты</label>
+        <module>default</module>
+        <controller>sections</controller>
+        <action>contacts</action>
+        <route>default</route>
+    </contacts>          
+</config>

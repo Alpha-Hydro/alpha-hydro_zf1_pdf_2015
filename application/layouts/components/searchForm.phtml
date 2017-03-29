@@ -1,0 +1,6 @@
+<?php
+	$this -> headScript() -> appendFile ( "/scripts/search.js" );
+?><form id="search" action="/catalog/products" method="get">
+	<input type="text" name="search" autocomplete="off" value="" /> <input type="submit" value="Поиск" />
+</form>
+<div id="search-result"></div>

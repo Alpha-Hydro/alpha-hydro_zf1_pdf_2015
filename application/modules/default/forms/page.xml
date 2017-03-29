@@ -1,0 +1,24 @@
+<page>
+    <method>POST</method>
+    <name>page</name>
+    <elements>
+        <name>
+            <type>text</type>
+            <options>
+                <required>true</required>
+            </options>
+        </name>
+        <s_content>
+            <type>textarea</type>
+        </s_content>        
+        <content>
+            <type>textarea</type>
+        </content>
+        <author>
+            <type>text</type> 
+        </author>
+        <submit>
+            <type>submit</type>
+        </submit>
+    </elements>
+</page>

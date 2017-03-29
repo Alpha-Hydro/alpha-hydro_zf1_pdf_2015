@@ -1,0 +1,16 @@
+<?php
+switch ( $this-> count ){
+	case 0:
+		echo "В корзине нет товаров";
+		break;
+	case 1:
+		echo "В корзине 1 товар";
+		break;
+	case 2: case 3: case 4: 
+		echo "В корзине $this->count товара";
+		break;
+	
+	default:
+		echo "В корзине $this->count товаров";
+		break;
+}

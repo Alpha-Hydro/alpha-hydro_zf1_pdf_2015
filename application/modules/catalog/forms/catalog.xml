@@ -1,0 +1,27 @@
+<catalog>
+	<method>POST</method>
+	<name>catalog</name>
+	<elements>
+		<name>
+			<type>text</type>
+			<options>
+				<label>Название</label>
+				<required>true</required>
+			</options>
+		</name>
+		<preview>
+			<type>file</type>
+			<options><label>Изображение</label></options>
+		</preview>
+		<file>
+			<type>file</type>
+			<options><label>Каталог</label></options>
+		</file>
+		<submit>
+			<type>submit</type>
+			<options>
+				<label>Сохранить</label>
+			</options>
+		</submit>
+	</elements>
+</catalog>

@@ -1,0 +1,44 @@
+<?php
+$this->headScript ()->appendFile ( "/scripts/tabs.my.js" );
+?>
+<table cellpadding="0" cellspacing="0" id="section">
+	<tr>
+		<td class="title"><h2>Контакты</h2></td>
+		<td class="tabs header">
+			<a href="#access"><span class="left img">-</span><span class="content">Схема проезда</span><span class="right img">-</span></a>
+			<a href="#map" onclick="mapInit();"><span class="left img">-</span><span class="content">На карте</span><span class="right img">-</span></a></td>
+	</tr>
+	<tr>
+		<td>
+			<div class="information">
+				<h3><?=$this -> company -> name ?></h3>
+				<img src="<?=$this -> company -> image ?>"
+					alt="<?=$this -> company -> name ?>" /> <span class="address"><?=$this -> company -> address ?></span>
+				<br clear="all" /> <br /> <span class="phone"><span class="code">+ 7
+						(812) </span><?=$this -> company -> phone ?></span>
+						<br />  <span class="phone"><span class="code">+ 7
+						(812) </span><?=$this -> company -> phone2 ?></span> <br /><span class="phone"><span class="code">+ 7
+						(800) </span><?=$this -> company -> phone3 ?></span><br />
+						<span style="color: #4f4f4f; font-style: italic; font-size: 12px; float: left; margin-left: 45px;">Бесплатно по России</span>
+						<br/><br/>						
+						<a href="mailto:<?=$this -> company -> email ?>" class="email"><?=$this -> company -> email ?></a>
+			</div>
+		</td>
+
+		<td class="tabs content">
+			<div id="tab-access">
+				<img src="<?=$this -> company -> map -> access -> img ?>"
+					alt="Схема проезда" />				
+			</div>
+
+			<div id="tab-map">
+				<div id="map_canvas" style="width:600px; height:450px"></div>
+				<?php
+				$this -> headScript() -> appendFile("http://maps.google.com/maps/api/js?sensor=false")
+									  -> appendFile("/scripts/map.js");
+				?>		
+			</div>
+			<a href="/files/pdf/alpha_hydro_map.pdf" target="_blank">На печать (pdf)</a>	
+		</td>
+	</tr>
+</table>

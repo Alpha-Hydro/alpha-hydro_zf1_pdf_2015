@@ -1,0 +1,78 @@
+<div id="product">
+	<a href="<?=$this->url(array("action"=>"pdf"));?>" class="print" target="_blank">Печать</a>
+	<?php if ( Zend_Auth::getInstance()->hasIdentity() ) : ?>
+	<span style="float:right;">
+		<a href="<?=$this -> url(array("controller"=>"products", "action"=>"edit", 'id' => $this->product->id)) ?>" class="admin edit">-</a>
+		<a href="<?=$this -> url(array("controller"=>"products", "action"=>"delete", 'id' => $this->product->id)) ?>" class="admin delete">-</a>
+		&nbsp; &nbsp;
+	</span>
+	<?php endif; ?>
+	<h2><?= $this -> product -> sku; ?></h2>
+	<h4><?= $this -> product -> name; ?></h4>
+
+	<table class="info">
+		<tr>
+			<td valign="middle"><img
+				src="/files/images/product/<?=$this -> product -> image ?>"
+                alt="<?= $this -> product -> sku .' '. $this -> product -> name; ?>" title="<?= $this -> product -> name .' - '. $this -> product -> sku; ?>" /></td>
+			<td valign="middle"><?php if ( $this->product->a_images ) foreach ( $this->product->a_images as $image ) : ?>
+                    <a href="/files/images/product/<?= $image ?>" class="window"><img src="/files/images/product/<?= $image ?>" alt="<?= $this -> product -> sku .' '. $this -> product -> name; ?>" title="<?= $this -> product -> sku .' '. $this -> product -> name; ?>" /><span class="hover">Увеличить</span></a>
+			<?php endforeach ?></td>
+			
+			<?php
+			$params = $this->product->getParams();
+			if (count ( $params ) > 0) : ?>
+			<td valign="top">
+				<h5>Свойства</h5>
+				<table class="params" style="border-spacing: 0">
+					<?php foreach ( $params as  $param ) : ?>
+					<tr>
+						<th><?=$param->name?></th>
+						<td><?php echo str_replace(chr('0x0D').chr('0x0A'),'</br>',htmlspecialchars($param -> value))?></td>
+					</tr>
+					<?php endforeach; ?>
+				</table>
+			</td>
+			<?php endif; ?>
+		</tr>
+	</table>
+	
+	<?php if ( $this -> product -> description ) : ?>
+	<h5>Описание</h5>
+	<div class="description">
+	    <?php echo str_replace(array('      ','       ','        '),'</br>',$this -> product -> description); ?>
+	</div>
+	<?php endif; ?>
+	
+	<?php
+    $subproductParams = $this->product -> getSubParams();
+	$subproducts = $this->subproducts;
+	if (count ( $subproducts ) > 0) :
+		$firstSubProduct = $subproducts->current ();
+		$count_prop = count($subproductParams) + 1;
+		?>
+	<table class="sub-products" style="border-spacing: 0">
+		<tr>
+			<th>Название</th>
+        
+	        <?php foreach ( $subproductParams as $param ) : ?>
+	        <th><?=$param -> name ?></th>
+	        <?php endforeach; ?>
+		</tr>
+
+        <?php foreach ( $subproducts as $sub_product ) : ?>
+        <tr>
+                <td style="width: <?=(100 / $count_prop)?>%"><?=$sub_product -> sku ?></td>
+                <?php $params = $sub_product->getParamsValues();?>
+                <?php foreach($params as $param) : ?>
+                    <td style="width: <?=(100 / $count_prop)?>%"><?=$param->value?></td>
+                <?php endforeach ?>
+        </tr>
+        <?php endforeach ?>
+    </table>
+	<?php endif;
+	?>
+</div>
+<?php
+$this -> headScript() -> appendFile("/scripts/production.js");
+?>

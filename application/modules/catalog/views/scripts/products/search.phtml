@@ -1,0 +1,10 @@
+<?php
+if ( count($this->products) > 0 ) :
+?><span class="text">Возможно, вы имели в виду:</span>
+    <?php foreach ( $this->products as $product ) : ?>
+        <?php $cat = $product->findDependentRowset('Model_DbTable_CategoryXref')->current();?>
+        <a href="<?=$this->url(array("controller"=>"products", "action"=>"view", "category" => $cat->category_id, "id"=>$product->id) )?>"><?=$product->sku?></a><?php
+    endforeach;
+else : ?>
+<span class="text">Совпадений не найдено</span>
+<?php endif; ?>

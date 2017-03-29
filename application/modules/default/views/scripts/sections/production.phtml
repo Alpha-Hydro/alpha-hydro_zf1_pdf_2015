@@ -1,0 +1,14 @@
+<div id="production-text">
+<? echo $this -> page -> description; ?>
+</div>
+<br clear="all" />
+<div class="centrified">
+<?php
+		$pages = $this -> page -> findDependentRowset("Model_DbTable_Pages");
+		foreach ( $pages as $i => $page ) : 
+			if ( $i < count($pages)-1) $attr ='style="margin-right: 67px"';
+			else $attr = '';
+		?><a href="/sections/production-post?id=<?=$page->id?>" <?=$attr?>><img src="<?=$page -> thumb?>" alt="<?=$page -> name?>" /></a><?php
+		endforeach;
+?>
+</div>

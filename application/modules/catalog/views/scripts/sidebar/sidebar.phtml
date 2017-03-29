@@ -1,0 +1,57 @@
+<ul class="categories">
+	<?php if ( $this->category ) : ?>
+	<li class="pcat"><a class="current"
+		href="<?=$this->url(array("category"=>$this->category->parent_id, "controller"=>"categories", "action"=>"index"))?>"><? echo $this->category->name ?></a>
+	</li>
+    <?php endif; ?>
+        <?php foreach ( $this->categories as $category ) : $class = $category->id == $this->current ? 'active' : ''; ?>
+            <li class="<?=$class?>"><a
+		href="<?=$this->url(array("category"=>$category->id, "controller"=>"categories", "action"=>"index"))?>"><?=$category -> name ?></a>
+		
+            	<?php 	if ( Zend_Auth::getInstance()->hasIdentity() ) : ?>
+            	<a class="admin"
+		href="<?= $this->url(array("controller"=>"categories", "action"=>"edit", "id"=>$category->id))?>">edit</a>
+            	<?php endif;
+            	
+            		$sub = $category -> findDependentRowset('Model_DbTable_Categories');
+            		if ( $sub ) : ?>
+            	<ul>
+            	<?php foreach ( $sub as $c ) : ?>
+            	<li><a href="<?=$this->url(array("category"=>$c->id, "controller"=>"categories", "action"=>"index"))?>"><?=$c->name?></a></li>
+            	<?php endforeach;?>
+            	</ul>
+            	<?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+
+<?php 	if ( Zend_Auth::getInstance()->hasIdentity() ) : ?>
+<a class="admin"
+	href="<?= $this->url(array("controller"=>"categories", "action"=>"edit", "id"=>NULL))?>">Создать
+	категорию</a>
+<?php 	endif; ?>
+
+
+<div class="pdf-catalogs">
+	<h3 >Скачать каталоги</h3>
+	
+	<?php
+	$i = 0;
+	foreach ( $this -> catalogs as $catalog ) :	$i++;
+	?><div class="catalog">
+		<img src="<?=$catalog->preview?>" align="left" />
+		<div class=desc>
+			<h5>#<?=$i?> <?=$catalog->name?></h5>
+			<br/>
+			<span class="file"><img src="/images/pdf-file.png" alt="pdf" /> <?=$this->formatSize( @filesize(APPLICATION_ROOT."/".$catalog->file) )?></span><br/>
+			<a href="<?=$catalog->file?>" class="download tab-pill" target="_blank"><span class="left img">-</span><span class="content">Загрузить</span><span class="right img">-</span></a>
+		</div>
+		<br clear="all" />
+	</div><?php
+	endforeach;
+	
+	if ( Zend_Auth::getInstance() -> hasIdentity() ) :
+	?><!--<a href="/catalog/index/edit-catalog">Добавить новый каталог</a>--><?php
+	endif;
+	?>
+</div>

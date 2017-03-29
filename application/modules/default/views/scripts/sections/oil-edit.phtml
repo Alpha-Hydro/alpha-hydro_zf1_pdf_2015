@@ -1,0 +1,29 @@
+<?
+$this->headScript ()->appendFile ( "/scripts/nicEdit/nicEdit.js" )->appendFile ( "/scripts/nicEdit/load.js" );
+
+$is_page = isset ( $this->page->content );
+if ( $is_page ){
+	Zend_Registry::set("oil", $this -> page -> name);
+}
+$w = $is_page ? 1000 : 500;
+$h = $is_page ? 500 : 251;
+?>
+<? if ( !$is_page ) : ?>
+<img src="/images/sections/production.png" align="right" />
+<? endif; ?>
+<div id="oil-text">
+	<textarea name="content" class="admin wysiwyg" id="production-content" style="width: <?=$w?>px; height: <?=$h?>px"><?
+	echo $is_page ? $this -> page -> content : $this -> page -> description;
+	?></textarea>
+</div>
+<? if ( !$is_page ): ?>
+<br clear="all" />
+<center><?php
+		$pages = $this -> page -> findDependentRowset("Model_DbTable_Pages");
+		foreach ( $pages as $i => $page ) : 
+			if ( $i < count($pages)-1) $attr ='style="margin-right: 67px"';
+			else $attr = '';
+		?><a href="/sections/oil-post/id/<?=$page->id?>" <?=$attr?>><img src="<?=$page -> thumb?>" alt="<?=$page -> name?>" /></a><?php
+		endforeach;
+?></center>
+<? endif;?>

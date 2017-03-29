@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forum>
+    <method>POST</method>
+    <name>forum</name>
+    <elements>
+        <author>
+            <type>text</type>
+            <options>
+                <label>Имя*</label>
+                <required>true</required>
+            </options>
+        </author>
+        
+        <email>
+            <type>text</type>
+            <options>
+                <label>Е-mail*</label>
+                <required>true</required>
+            </options>
+        </email>
+        
+        <category>
+            <type>text</type>
+            <options>
+                <label>В форум*</label>
+                <required>true</required>
+                <MultiOptions>
+                    <faq>
+                    	<key>Вопросы и запросы</key>
+                    	<value>Вопросы и запросы</value>
+					</faq>
+                    <cas>
+                    	<key>Отзывы и предложения</key>
+                    	<value>Отзывы и предложения</value>
+					</cas>
+                    <complaints>
+                    	<key>Книга жалоб</key>
+                    	<value>Книга жалоб</value>
+					</complaints>
+                </MultiOptions>
+            </options>
+        </category>
+        
+        <content>
+            <type>textarea</type>
+            <options>
+                <label>Ваш вопрос*</label>
+                <required>true</required>
+            </options>
+        </content>           
+        
+        <submit>
+            <type>submit</type>
+            <options>
+                <label>Отправить</label>
+            </options>
+        </submit>
+    </elements>
+</forum>

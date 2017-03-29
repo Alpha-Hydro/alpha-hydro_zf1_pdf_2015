@@ -1,0 +1,26 @@
+<div class="categories-list">
+<?php foreach ( $this->rowset as $row ) : ?>
+<div class="item <?=($row->order == -100) ? 'hidden' : ''?>">
+	<?php if( Zend_Auth::getInstance()->hasIdentity() ) : ?>
+		<div class="item-overlay">
+			<a title="Редактировать" href="<?=$this -> url(array("controller"=>"categories", "action"=>"edit", 'id' => $row -> id)) ?>" class="admin edit">-</a>
+			<a title="Удалить" href="<?=$this -> url(array("controller"=>"categories", "action"=>"delete", 'id' => $row -> id)) ?>" class="admin delete">-</a>
+		</div>
+	<?php endif;?>
+	
+	<a href="<?=$this -> url(array("controller"=>"categories", "action"=>"index", 'category' => $row -> id)) ?>">
+		<img src="<?=
+		$row->image ? "/files/images/category/$row->image" : 'http://fakeimg.pl/124x124/?text=?'
+		?>" alt="Фотография" />
+		<span class="name"><?=$row -> name ?></span>
+	</a>
+</div>
+<?php endforeach; ?>
+</div>
+<?php 	if ( Zend_Auth::getInstance()->hasIdentity() ) :
+?><a href="<?= $this->url(array("controller"=>"categories", "action"=>"edit", "id"=>NULL))?>" class="item">
+	<img src="/files/images/category/icons/add-category.png" width='160' alt="Создать категорию" />
+	<span class="name">Создать категорию</span>
+</a><?php
+endif; ?>
+<br clear="all" />

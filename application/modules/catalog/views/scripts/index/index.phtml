@@ -1,0 +1,39 @@
+<a href="/catalog/categories">Категории</a><br/>
+
+<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+<script>
+    $(function(){
+       
+       $("#search").keyup(function(e){
+           $("#autocomplete").empty();
+           
+           if ( $(this).val().length < 3 ) return true;
+           else 
+           $.post('/products/findsku', {sku: $(this).val()},
+                             function(data){
+                                 $("#autocomplete").empty();
+                                 if ( data.length > 0 ) for ( i=0; i < data.length; i++ ){
+                                     
+                                     $("#autocomplete").append("<a href='#' class='autocomplete'>"+data[i]+"</a><br/>");
+                                     
+                                 } else {
+                                     $("#autocomplete").html("Нет совпадений");
+                                 }
+                                 
+                             }, 'json');           
+       });
+       
+       
+       
+       $("#autocomplete").on('click', '.autocomplete', function(){
+           $("#search").val ( $(this).text() );
+           $("#search-form").submit();
+       });
+    });
+</script>
+
+<form id="search-form">
+    <input type="text" name="search" id="search" />
+    <div id="autocomplete"></div>
+    <input type="submit" />
+</form>

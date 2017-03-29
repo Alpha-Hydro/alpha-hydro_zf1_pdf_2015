@@ -1,0 +1,35 @@
+<basket>
+	<method>POST</method>
+	<name>basket</name>
+	<elements>
+		<name>
+			<type>text</type>
+			<options>
+				<label>Имя</label>
+				<required>true</required>
+			</options>
+		</name>
+		<email>
+			<type>text</type>
+			<options>
+				<label>Имя</label>
+				<required>true</required>
+			</options>
+		</email>
+		<phone>
+			<type>text</type>
+			<options>
+				<label>Имя</label>
+				<required>true</required>
+			</options>
+		</phone>
+		
+		<content>
+			<type>text</type>
+			<options>
+				<label>Имя</label>
+				<required>true</required>
+			</options>
+		</content>
+	</elements>
+</basket>

@@ -1,0 +1,33 @@
+<a href="/"><img id="alfa-hydro" src="/images/alfa-hydro.png" alt="Альфа-Гидро" /></a>
+
+<?php 
+$xml = new Zend_Config_Xml(APPLICATION_PATH."/config/information.xml");
+?>
+
+<div class="block" id="contacts">
+	<span class="phone"><span class="code">+ 7 (812) </span><?php echo $xml->phone?></span>
+	<br/>
+	<a href="mailto:<?=$xml->email?>" class="email"><?=$xml->email?></a>
+</div>
+
+<div class="block" id="worktime">
+	<img src="/images/workdays-bar.jpg" alt="Время работы" align="left" />
+	<div class="worktime">9:00 - 18:00</div>
+</div>
+
+<div class="block" id="address">
+	193312, г. Санкт-Петербург <br /> ул.Кржижановского, д.12/1
+</div>
+
+<div id="mainmenu">
+	<ul>
+	<?php	$menu = new Zend_Navigation ( new Zend_Config_Xml ( APPLICATION_PATH . "/config/menu.xml" ) );
+		foreach ( $menu as $menuItem ) :
+			?><li><a href="<?=$menuItem -> getHref() ?>"><?=$menuItem ?></a></li><?php
+		endforeach;
+	?>
+	</ul>
+	
+	<? echo $this->partial("components/searchForm.phtml")?>
+	<div class="clear: both"></div>
+</div>

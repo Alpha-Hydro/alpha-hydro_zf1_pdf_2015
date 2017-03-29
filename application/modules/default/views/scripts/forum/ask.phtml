@@ -1,0 +1,7 @@
+<?php if ( $this->error == 0 ):?>
+<h2>Ваш вопрос успешно отправлен</h2>
+<a href="/forum">вернуться на форум</a>
+<?php elseif ( $this->error == 1 ):?>
+<h2 style="color: red">Ваш вопрос НЕ БЫЛ отправлен, так как Вы указали не верный e-mail.</h2>
+<a href="/forum">вернуться на форум</a>
+<?php endif; ?>

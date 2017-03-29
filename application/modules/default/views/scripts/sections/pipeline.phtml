@@ -1,0 +1,32 @@
+<br clear="all" />
+<div id="pipeline-text">
+	
+<? if(!$this -> page_id): ?>
+	<? echo $this -> page -> description; ?>
+	
+	<? if(!empty($this -> section_pages)): ?>
+		<div class="pages">
+			<? if ( $this->isAllowed("page", "edit")): ?>
+				<br clear="all" /><br />		
+				Добавить страницу <a class="admin new" href="/sections/edit/?parent_id=<?=$this->page->id?>" title="добавить">-</a>
+				<br clear="all" /><br />
+			<? endif; ?>		
+		<? foreach($this -> section_pages as $page): ?>
+			<div class="item">
+				<div class="name"><? echo $page -> name ?>
+					<? if ( $this->isAllowed("page", "edit")): ?>
+					<a class="admin edit" style="line-height: 11px" href="/sections/edit/id/<?=$page->id?>/?from=pipeline" title="редактировать">-</a>
+					<a class="admin delete" href="/sections/delete?id=<?=$page->id?>" title="удалить">-</a>
+					<? endif; ?>
+				</div>
+				<div class="img"><a href="/sections/pipeline/id/<?=$page->id?>"><img src="<? echo $page -> thumb ?>" alt="<?=$page->name?>" /></a></div>
+				<div class="descr"><? echo $page -> s_content ?></div>								
+			</div>
+		<? endforeach; ?>
+		</div>
+	<? endif; ?>
+<? else: ?>
+	<a href="/sections/pipeline/" class="tomain"><< к списку</a><br clear="all" /><br clear="all" />
+	<? echo $this -> section_pages[0] -> content ?>
+<? endif; ?>
+</div>

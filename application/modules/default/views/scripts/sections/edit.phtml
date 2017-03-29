@@ -1,0 +1,40 @@
+<?
+	$this -> headScript() -> appendFile("/scripts/nicEdit/nicEdit.js")
+						  -> appendFile("/scripts/nicEdit/load.js"); 
+?>
+<form method="post" enctype="multipart/form-data">
+	<div class="posts post">		
+		<a href="/sections/<? echo $this -> from ? $this -> from : 'media' ?>" class="tomain">&lt;&lt; к списку</a>		
+		<h2>Name: <input name="name" type="text" class="admin h2" value="<?=$this->page->name?>"><input title="сохранить" type="submit" class="admin save" style="float: right" /></h2>
+		
+		<table cellpadding="0" cellspacing="0" width="100%">			
+				<? if ( $this -> type != "posts" ) : ?>
+			<tr>
+				<td valign="top">
+					<h3>Image:</h3>
+					<img src="<?=$this->page->thumb?>" alt="thumbnail" style="max-width: 200px" /><br/>
+					<input type="file" name="thumb" style="width: 200px" />
+				</td>
+			</tr>
+				<? endif;?>
+			<tr>
+				<td>
+					<h3>Short content:</h3>
+					<textarea class="admin wysiwyg" name="s_content" id="post-s_content"><?
+						echo $this->page->s_content;
+					?></textarea>
+					
+					<h3>Full content:</h3>
+					<textarea class="admin wysiwyg" name="content" id="post-content"><?
+						echo $this->page->content;
+					?></textarea>				
+				</td>
+			</tr>
+		</table>
+
+		
+
+		
+		<span class="author">Автор: <input name="author" type="text" class="admin" value="<?=$this->page->author?>" /></span>
+	</div>
+</form>

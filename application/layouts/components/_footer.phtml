@@ -1,0 +1,48 @@
+<div id="footer">
+	<div class="wrapper">
+		<div class="copyright">© Альфа-Гидро, 2012-2015</div>
+		<div class="sign">Гидравлические системы и компоненты</div>
+		<div class="antares" id="antares">
+			<a href="http://antares-labs.ru"><img src="/images/antares.png" alt="" /></a>
+			<? echo $this->headScript ()-> appendFile ( "/scripts/jquery.scrollTo-1.4.3.1-min.js" ); ?>
+			<script>
+				$(function() {
+					upperFooter = false;
+					$('#antares').mouseenter(function() {
+						if($('#antares').hasClass('up') != true) {
+							upperFooter = setTimeout(function() {
+								$('#antares').animate({
+									'height' : '120px'
+								}, 10);
+								$('#footer').animate({
+									'height' : '+=80px'
+								}, 10, function() {
+									$('body').scrollTo('+=150px', {
+										'axis' : 'y',
+										'duration' : 300
+									});
+								});
+							}, 1500);
+							$('#antares').addClass('up');
+						}
+					});
+					$('#antares').mouseleave(function() {
+						clearTimeout(upperFooter);
+					});
+					$('#footer').mouseleave(function() {
+						$('#antares').removeClass('up');
+						if(upperFooter != false) {
+							clearTimeout(upperFooter);
+						}
+						$('#antares').animate({
+							'height' : '46px'
+						}, 300);
+						$('#footer').animate({
+							'height' : '112px'
+						});
+					});
+				});
+			</script>
+		</div>
+	</div>
+</div>
