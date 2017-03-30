@@ -19,7 +19,11 @@ class Model_Static_Fonts {
     /**
      * Fonts for load with names
      */
-    protected static $Model_Static_Fonts = array('Franklin Gothic Demi Cond' => 'Franklin Gothic Demi Cond.ttf', 'Arial Narrow Bold' => 'Arial Narrow Bold.ttf', 'Arial Narrow' => 'Arial Narrow.ttf', 'Arial' => 'Arial.ttf');
+    protected static $Model_Static_Fonts = array(
+        'Franklin Gothic Demi Cond' => 'Franklin Gothic Demi Cond.ttf',
+        'Arial Narrow Bold' => 'Arial Narrow Bold.ttf',
+        'Arial Narrow' => 'Arial Narrow.ttf', 'Arial' => 'Arial.ttf'
+    );
 
     /**
      * Already loaded fonts
@@ -138,6 +142,7 @@ class Model_Static_PdfPage extends Zend_Pdf_Page {
 
     /**
      * Get page margins
+     *
      * @return array Page margins [top, right, bottom, left]
      */
     public function getMargins() {
@@ -146,6 +151,11 @@ class Model_Static_PdfPage extends Zend_Pdf_Page {
 
     /**
      * Set page margins
+     *
+     * @param $top
+     * @param $right
+     * @param $bottom
+     * @param $left
      * @return array Page margins [top, right, bottom, left]
      */
     public function setMargins($top, $right, $bottom, $left) {
@@ -211,6 +221,9 @@ class Model_Static_PdfPage extends Zend_Pdf_Page {
      * @param int $page Page number
      * @param bool $initalize Initalize this page at null offset
      * @param array $margin Change default margins
+     * @param string $format
+     * @param string $format_size
+     * @param bool $print
      * @api
      */
     // В зависимости от параметров  переданных при создание объекта, вносим нужные нам значения.
@@ -236,7 +249,7 @@ class Model_Static_PdfPage extends Zend_Pdf_Page {
             $this->fontSizeFormatSnoski = 4.5;
         }
         $this->dumpStyle = new Zend_Pdf_Style();
-        $this->dumpStyle -> setFont(Model_Static_Fonts::get("Arial Narrow"), 15);
+        $this->dumpStyle->setFont(Model_Static_Fonts::get("Arial Narrow"), 15);
         // init / draw line
         if ($initalize)
             $this -> init();
@@ -439,7 +452,7 @@ class Model_Static_PdfPage extends Zend_Pdf_Page {
             $wrappedLine = '';
 
             while ($i < $word_count) {
-                if ($this -> widthForStringUsingFontsize($wrappedLine . ' ' . $words[$i], $style -> getFont(), $style -> getFontsize()) < $max_width) {
+                if ($this -> widthForStringUsingFontsize($wrappedLine . ' ' . $words[$i], $style->getFont(), $style -> getFontsize()) < $max_width) {
                     if (!empty($wrappedLine)) {
                         $wrappedLine .= ' ';
                     }
@@ -713,7 +726,7 @@ class Model_Static_PdfPage extends Zend_Pdf_Page {
             }
 
             $heightSnoski = 0;
-                $y = $line_y ;
+            $y = $line_y ;
             if ($header) {
                 $style = new Zend_Pdf_Style();
                 $style -> setFont(Model_Static_Fonts::get("Arial Narrow"), $this->fontSizeFormatSnoski);

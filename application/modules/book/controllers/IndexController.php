@@ -28,20 +28,41 @@ class Book_IndexController extends Zend_Controller_Action {
 	protected $contentPages = 1;
 
     /**
+     * @var Model_DbTable_Categories()
+     */
+    protected $_categoriesModel;
+
+    /**
+     * @var Zend_Config
+     */
+    protected $config;
+
+	public function init()
+    {
+        if ( !Zend_Auth::getInstance()->hasIdentity() ) {
+            throw new Zend_Exception ( "Page not found", 404 );
+        }
+
+        $this->_categoriesModel = new Model_DbTable_Categories();
+        $this->config = new Zend_Config(require APPLICATION_PATH.'/config/pdf_catalog.php');
+    }
+
+    /**
      * Default action, show PDF book generation form
      *
      */
-    public function indexAction() {    
-	if ( !Zend_Auth::getInstance()->hasIdentity() ) {
-		    throw new Zend_Exception ( "Page not found", 404 );
-	    }
-        $categoriesModel = new Model_DbTable_Categories();
+    public function indexAction() {
 
-        $this->view->categories = $categoriesModel->fetchAll(
-            $categoriesModel
-                ->select()
-                ->where('parent_id IS NULL OR parent_id = 0')
-                ->order("order"));
+        $this->view->assign([
+            'categories' => $this->_categoriesModel->fetchAll(
+                $this->_categoriesModel
+                    ->select()
+                    ->where('parent_id IS NULL OR parent_id = 0')
+                    ->order("order")
+            ),
+            'except_category' => $this->config->get('except_category')->toArray(),
+            'except_product' => $this->config->get('except_product')->toArray(),
+        ]);
     }
 
     /**
@@ -52,40 +73,33 @@ class Book_IndexController extends Zend_Controller_Action {
      */
     public function generateAction() {
 
-	    if ( !Zend_Auth::getInstance()->hasIdentity() ) {
-		    throw new Zend_Exception ( "Page not found", 404 );
-	    }
-
-        $categoriesModel = new Model_DbTable_Categories();				
-
-        $this -> view -> categories = array();
-        $this -> view -> parents = array();
-						
-		if (null != ($categories = $this -> getRequest() -> getParam("categories"))) {					
+        $categoryIds = [];
+        if (null != ($categories = $this -> getRequest() -> getParam("categories"))) {
 			foreach ($categories as $category) {							
-				$categoryObj = $categoriesModel -> find($category) -> current();							
+				$categoryObj = $this->_categoriesModel -> find($category) -> current();
 				$children = $categoryObj -> findDependentRowset("Model_DbTable_Categories") -> toArray();							
 				foreach($children as $child) {
 					$categoryIds[] = $child['id'];
 				}				
 			}
 		}
-																	
-        //if (null != ($categoryIds = $this -> getRequest() -> getParam("categories")))
-        foreach ($categoryIds as $categoryId) {
-            $category = $categoriesModel -> find($categoryId) -> current();
-            $this -> view -> parents[$category -> id] = $category -> name;
 
-            $children = $category -> findDependentRowset("Model_DbTable_Categories") -> toArray();
+        $exceptionList = [];
+        $exceptionProductsList = [];
+        $categoriesChild = [];
+        $parents = [];
+        foreach ($categoryIds as $categoryId) {
+            $category = $this->_categoriesModel->find($categoryId)-> current();
+            $parents[$category->id] = $category->name;
+            $children = $category->findDependentRowset("Model_DbTable_Categories") -> toArray();
 
             if(empty($children)) {
                 $children[] = $category->toArray();
             }
 
-            $exceptionList = array();
             if($this->getRequest()->getParam("except")) {
-                $exceptionList = explode(',', $this -> getRequest() -> getParam("except"));
-                foreach($children as $key=>$child_cat) {
+                $exceptionList = explode(',', $this->getRequest()->getParam("except"));
+                foreach($children as $key => $child_cat) {
                     foreach($exceptionList as $except) {
                         if($child_cat['id'] == (int) trim($except) || $child_cat['parent_id'] == (int) trim($except)) {
                             unset($children[$key]);
@@ -94,23 +108,20 @@ class Book_IndexController extends Zend_Controller_Action {
                 }
             }
 
-            $exceptionProductsList = array();
             if($this->getRequest()->getParam("except_products")) {
-                $exceptionProductsList = explode(',', $this -> getRequest() -> getParam("except_products"));
+                $exceptionProductsList = explode(',', $this->getRequest()->getParam("except_products"));
             }
 
-            /* DEBUG */
-            /*foreach($children as $key=>$child_cat) {
-                if($child_cat['id'] != '25') {
-                    unset($children[$key]);
-                }
-            }*/
-            /* END DEBUG */
+            $categoriesChild = array_merge($categoriesChild, $children);
 
-            $this -> view -> categories = array_merge($this -> view -> categories, $children);
-            $this -> view -> except = $exceptionList;
-            $this -> view -> exceptProducts = $exceptionProductsList;
         }
+
+        $this->view->assign([
+            'categories' => $categoriesChild,
+            'except' => $exceptionList,
+            'exceptProducts' => $exceptionProductsList,
+            'parents' => $parents,
+        ]);
     }
 
     /**
@@ -124,10 +135,6 @@ class Book_IndexController extends Zend_Controller_Action {
      */
     public function bycategoryAction() {
 
-
-        if ( !Zend_Auth::getInstance()->hasIdentity() ) {
-            throw new Zend_Exception ( "Page not found", 404 );
-        }
         set_time_limit(3600);
 
         $this->_helper->layout->disableLayout();
@@ -151,16 +158,17 @@ class Book_IndexController extends Zend_Controller_Action {
             ? $this->getRequest()->getParam("print")
             : true;
 
+        //Zend_Debug::dump($print); die();
+
 
         $pdfBook = new Model_Static_PdfBook($pageFormat , $print);
-        $categoriesModel = new Model_DbTable_Categories();
 
 		$pdfBook->logger = new Zend_Log();
 		$pdfBook->logWriter = new Zend_Log_Writer_Stream(APPLICATION_ROOT.'/book.log');
 		$pdfBook->logger->addWriter($pdfBook->logWriter);
 		$pdfBook->logger->log('get params', Zend_Log::INFO);
 
-		$category = $categoriesModel->find($categoryId)->current();
+		$category = $this->_categoriesModel->find($categoryId)->current();
 		$pdfBook->logger->log('get oject category', Zend_Log::INFO);
 
 		$pdfBook->exceptionProductList = $this->getRequest()->getParam("except_products");
@@ -188,9 +196,6 @@ class Book_IndexController extends Zend_Controller_Action {
 
 	// генерация контента всего каталога
 	public function generateContents($startPage = 3, $pageFormat = 'A5', $print = false) {
-		if ( !Zend_Auth::getInstance()->hasIdentity() ) {
-		    throw new Zend_Exception ( "Page not found", 404 );
-		}
 		$pdfBook = new Model_Static_PdfBook($pageFormat, $print);
 		
 		$book = $pdfBook->generateContents($startPage);
@@ -199,7 +204,7 @@ class Book_IndexController extends Zend_Controller_Action {
 		
 		$saveFilename = 'contents-'.$startPage.'.pdf';
 		
-		$book -> save($this::PDFBOOK_DIR . '/' . $saveFilename);
+		$book->save($this::PDFBOOK_DIR . '/' . $saveFilename);
 	}
 
     /**
@@ -210,9 +215,7 @@ class Book_IndexController extends Zend_Controller_Action {
      * @internal param int $page Current page
      */
     public function finishbookAction() {
-        if ( !Zend_Auth::getInstance()->hasIdentity() ) {
-            throw new Zend_Exception ( "Page not found", 404 );
-        }
+
         $this -> _helper -> layout -> disableLayout();
 
         $page = $this -> getRequest() -> getParam("page");
@@ -249,7 +252,7 @@ class Book_IndexController extends Zend_Controller_Action {
 			$this->generateContents($startPage, $pageFormat, $print);
 		}
 		
-		$this -> view -> page = $this->contentPages + $startPage;
+		$this->view->page = $this->contentPages + $startPage;
 		
 		$this->zipResults();
     }
@@ -259,15 +262,13 @@ class Book_IndexController extends Zend_Controller_Action {
      * clear folder and indexes table
      */
     public function newbookAction() {
-	if ( !Zend_Auth::getInstance()->hasIdentity() ) {
-		throw new Zend_Exception ( "Page not found", 404 );
-	}
-        $this -> _helper -> layout -> disableLayout();
+
+        $this->_helper->layout-> disableLayout();
         // clear indexes
         $categoryIndex = new Model_DbTable_CategoryIndex();               
         $productIndex = new Model_DbTable_ProductIndex();
-		$categoryIndex -> truncate();
-        $productIndex -> truncate();
+		$categoryIndex->truncate();
+        $productIndex->truncate();
 
         // clear folder
         $files = scandir($this::PDFBOOK_DIR);
@@ -280,13 +281,12 @@ class Book_IndexController extends Zend_Controller_Action {
     }
 	
 	public function zipResults() {
-        if ( !Zend_Auth::getInstance()->hasIdentity() ) {
-            throw new Zend_Exception ( "Page not found", 404 );
-        }
 
 		$path = $this::PDFBOOK_DIR;
 		$zip = new ZipArchive;
-		$zip->open($path.'catalog.zip', ZipArchive::CREATE);
+
+		$file_name = $path.'catalog_'.date("Ymd").'.zip';
+		$zip->open($file_name, ZipArchive::CREATE);
 		if (false !== ($dir = opendir($path)))
          {
              while(false !== ($file = readdir($dir)))
@@ -301,7 +301,9 @@ class Book_IndexController extends Zend_Controller_Action {
          {
              die('Can\'t read dir');
          }
-		$zip->close();									
+		$zip->close();
+
+		$this->view->zipFile = $file_name;
 	}
 
 }

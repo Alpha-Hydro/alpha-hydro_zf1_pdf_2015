@@ -7,9 +7,10 @@
     </ul>    
     <br />
     За исключением категорий (id категорий через запятую):<br />
-    <textarea name="except" style="width: 500px; height: 200px;"></textarea><br />
+    <textarea name="except" style="width: 500px; height: 200px;"><?php if($this->except_category) echo implode(",", $this->except_category);?></textarea>
+    <br />
     За исключением товаров (id товаров через запятую):<br />
-    <textarea name="except_products" style="width: 500px; height: 200px;"></textarea>
+    <textarea name="except_products" style="width: 500px; height: 200px;"><?php if($this->except_product) echo implode(",", $this->except_product);?></textarea>
     <br /><br />
     Начинать нумерацию со страницы <input type="text" name="page" value="3" maxlength="4" />
      <br /><br />

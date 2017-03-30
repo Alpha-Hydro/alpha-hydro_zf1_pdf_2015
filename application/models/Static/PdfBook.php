@@ -23,6 +23,7 @@ GLOBAL $OLD_CATEGORY;
 class Model_Static_PdfBook {
 	/**
 	 * Log instance
+     * Zend_Log
 	 */
 	 public $logger;
 
@@ -148,7 +149,13 @@ class Model_Static_PdfBook {
                
         $this->book->pages[] = $this->page;
         
-        $this->page = new Model_Static_PdfPage($this->page->getPageNumber() + 1, $init, $this->swapMargins( $this -> page -> getMargins() ), $this->format, $this->format_size, $this->print );
+        $this->page = new Model_Static_PdfPage(
+                $this->page->getPageNumber() + 1,
+                $init,
+                $this->swapMargins( $this -> page -> getMargins() ),
+                $this->format,
+                $this->format_size, $this->print
+            );
        
         return $this->page;
     }
@@ -180,11 +187,13 @@ class Model_Static_PdfBook {
      * @api
      */
     public function getProductImageFullpath($filename){
-        if($this ->print){
+
+        if($this->print){
             $path = APPLICATION_ROOT . '/files/images/product_tiff/' . substr($filename, 0, strripos($filename, ".")).'.tif';
         } else {
             $path = APPLICATION_ROOT . '/files/images/product/' . $filename;
         }
+
         return $path;
     }
 
@@ -297,7 +306,7 @@ class Model_Static_PdfBook {
 
 
         // --- block / images
-        
+        // @TODO - Проверка на существование картинки
         $images = array($product->image);
         if ($product->a_images)
             $images[] = $product->a_images[0];

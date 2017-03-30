@@ -1,3 +1,7 @@
 <?php
-    echo json_encode(array("status"=>"OK", 'page'=>$this->page));
+    echo json_encode(array(
+        "status"=>"OK",
+        'page'=>$this->page,
+        'zip_file' => ($this->zipFile) ? $this->zipFile : null,
+    ));
 ?>

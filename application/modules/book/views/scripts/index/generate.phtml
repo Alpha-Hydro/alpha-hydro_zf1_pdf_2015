@@ -19,29 +19,32 @@
 <script type="text/javascript">
 	$(function(){
 
-        Except = new Array();
+        var Except = new Array();
         <?php foreach($this->except as $except): ?>
         Except.push(<?php echo $except ?>);
         <?php endforeach; ?>
 
-        exceptProducts = new Array();
+        var exceptProducts = new Array();
         <?php foreach($this->exceptProducts as $except): ?>
         exceptProducts.push(<?php echo $except ?>);
         <?php endforeach; ?>
 
-        Categories = new Array();
+        var Categories = new Array();
         <?php foreach ($this->categories as $category) : $category = (object) $category?>
           <? if(isset($this -> parents[$category -> parent_id])): ?>
             Categories.push (new Array("<?=$this -> parents[$category -> parent_id] ?>/<?=$category -> name ?>",<?=$category -> id ?>));
           <? endif; ?>
         <? endforeach; ?>
+
         function buttonEnable() {
             $("#startButton").prop("disabled", false);
         }
 	
-        secondTime = 0;
-        pageFormat = 'A4';
-        print = false;
+        var secondTime = 0;
+        var pageFormat = 'A4';
+        var print = false;
+        var path_zip_file = '/files/pdf/catalog.zip';
+
         function finishBook() {
             $.post("/book/index/finishbook", {
                 page : PAGE,
@@ -49,13 +52,14 @@
                 pageFormat: pageFormat,
                 print: print
             }, function(result) {
+            	console.log(result);
                 buttonEnable();
                 if(secondTime == 0) {
                     secondTime = 1;
                     PAGE = result.page;
                     $("#startButton").click();
                 }else{
-                    $('#loading').show().html('<a href="/files/pdf/book/catalog.zip">Скачать сгенерированный каталог (zip)</a>');
+                    $('#loading').show().html('<a href="'+ result.zip_file +'">Скачать сгенерированный каталог (zip)</a>');
                 }
             }, 'json').error(function(post_error) {
                 console.log(post_error);
@@ -90,18 +94,18 @@
                     }
                     generateCategory(i + 1);
                 }, 'json')
-                .error(function() {
-//                    console.log(xhr.statusText);
+                .error(function(post_error) {
+                    console.log(post_error);
 //                    console.log(textStatus);
 //                    console.log(error);
-//                    $("#log").append("ОШИБКА расчета нумерации страниц для категории " + Categories[i][0] + ", id:" + Categories[i][1]+"\n");
-                    alert("Error occurred");
+                    $("#log").append("ОШИБКА расчета нумерации страниц для категории " + Categories[i][0] + ", id:" + Categories[i][1]+"\n");
+                    alert(post_error.responseText);
                     buttonEnable();
                     $('#loading').hide();
                 });
         }
 
-        PAGE = <?=$page?>;
+        var PAGE = <?=$page?>;
         $("#startButton").click(function(e) {
             $.post("/book/index/newbook",
               {
@@ -136,8 +140,8 @@
 
 <div id="loading" style="display: none;">Loading...</div>
 <h2>Генерация книги</h2>
-<textarea id="log" cols="150" rows="50" readonly="readonly"></textarea>
-<br/>Формат A5 <input type="radio" name="page_format" value="A5"> Формат A4<input type="radio" name="page_format" checked value="A4"> Для печати <input type="checkbox" name="print" >
+<textarea id="log" cols="100" rows="20" readonly="readonly"></textarea>
+<br/>Формат A5 <input type="radio" name="page_format" value="A5"> Формат A4<input type="radio" name="page_format" checked value="A4"> Для печати <input type="checkbox" name="print">
 <button id="startButton">
 	Генерировать книгу
 </button>
