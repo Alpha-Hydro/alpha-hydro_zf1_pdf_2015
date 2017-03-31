@@ -43,7 +43,6 @@
         var secondTime = 0;
         var pageFormat = 'A4';
         var print = false;
-        var path_zip_file = '/files/pdf/catalog.zip';
 
         function finishBook() {
             $.post("/book/index/finishbook", {
@@ -59,7 +58,7 @@
                     PAGE = result.page;
                     $("#startButton").click();
                 }else{
-                    $('#loading').show().html('<a href="'+ result.zip_file +'">Скачать сгенерированный каталог (zip)</a>');
+                    $('#loading').show().html('<a href="/files/pdf/book'+ result.zip_file +'">Скачать сгенерированный каталог (zip)</a>');
                 }
             }, 'json').error(function(post_error) {
                 console.log(post_error);

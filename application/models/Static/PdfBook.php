@@ -23,15 +23,28 @@ GLOBAL $OLD_CATEGORY;
 class Model_Static_PdfBook {
 	/**
 	 * Log instance
-     * Zend_Log
+     * @var Zend_Log
 	 */
-	 public $logger;
+	public $logger;
 
 	/**
 	 * Log instance
+     * @var Zend_Log_Writer_Stream
 	 */
-	 public $logWriter;
-	 
+    public $logWriter;
+
+
+    /**
+     * Error log instance
+     * @var Zend_Log
+     */
+    public $errorLog;
+
+    /**
+     * Error log instance
+     * @var Zend_Log_Writer_Stream
+     */
+    public $errWriter;
 	/**
 	 * Except this products from generation by id
 	 */
@@ -74,13 +87,6 @@ class Model_Static_PdfBook {
      */
     protected $format;
 
-    /*
-     * Добавлены дополнительно
-     */
-    //protected $print;
-    //protected $old_category;
-    //protected $category_page;
-
     /**
      * Create new book
      *
@@ -93,6 +99,18 @@ class Model_Static_PdfBook {
     
     //В зависимости от формата выставляем значения для объекта.
     public function __construct( $format, $print = false) {
+        $this->logger = new Zend_Log();
+
+        $this->logWriter = new Zend_Log_Writer_Stream(APPLICATION_ROOT.'/book.log');
+        $this->logger->addWriter($this->logWriter);
+
+        $this->errorLog = new Zend_Log();
+        $this->errWriter = new Zend_Log_Writer_Stream(APPLICATION_ROOT.'/pdf_error.log');
+        $this->errorLog->addWriter($this->errWriter);
+
+        /*$filter = new Zend_Log_Filter_Priority(Zend_Log::ERR);
+        $this->errWriter->addFilter($filter);*/
+
 	    if ($format == 'A4'){
 		   
 		    if( $print == 'true' ) $print = TRUE;
@@ -298,39 +316,60 @@ class Model_Static_PdfBook {
         
         // --- block / information
 
-        $page -> setFont(Model_Static_Fonts::get("Franklin Gothic Demi Cond"), 14);
-        $page -> drawTextBlock($product -> sku, 5, $page -> getHeight() - $offset);
+        $page->setFont(Model_Static_Fonts::get("Franklin Gothic Demi Cond"), 14);
+        $page->drawTextBlock($product -> sku, 5, $page -> getHeight() - $offset);
 	
-        $page -> setFont(Model_Static_Fonts::get("Franklin Gothic Demi Cond"), 10);
-        $page -> drawTextBlock($product -> name, 5, $page -> getHeight() - 10 - $offset);
+        $page->setFont(Model_Static_Fonts::get("Franklin Gothic Demi Cond"), 10);
+        $page->drawTextBlock($product -> name, 5, $page -> getHeight() - 10 - $offset);
 
 
         // --- block / images
-        // @TODO - Проверка на существование картинки
-        $images = array($product->image);
+        /*$images = array($product->image);
         if ($product->a_images)
-            $images[] = $product->a_images[0];
+            $images[] = $product->a_images[0];*/
+
+        $images = [];
+        // Проверка на существование изображений
+        // Если файла не существует в масссив не записываем
+        // В лог добавляем что такого файла не существует
+        if ($product->image){
+            $fileImage = $this->getProductImageFullpath($product->image);
+            if (file_exists($fileImage))
+                $images[] = $fileImage;
+            else
+                $this->logger->log("Файл ".$fileImage. " не существует.", Zend_Log::INFO);
+        }
+
+        if ($product->a_images){
+            $fileDraft = $this->getProductImageFullpath($product->a_images[0]);
+            if(file_exists($fileDraft))
+                $images[] = $fileDraft;
+            else
+                $this->errorLog->log("Файл ".$fileDraft. " не существует.", Zend_Log::INFO);
+        }
+
+        //Zend_Debug::dump($images); die();
+
 
         $x = 0;
-
-        if ($page -> getPageNumber() % 2 == 0) {    // если картинки справа (иконки слева)
+        // если картинки справа (иконки слева)
+        if ($page -> getPageNumber() % 2 == 0) {
             $images = array_reverse($images);
             // здесь нужно посчитать правильные ширины отступов начала изображений
-            $x = $page -> getWidth() - 5;
+            $x = $page->getWidth()- 5;
 
-            foreach ($images as $image) {
-                $sizes = $page->picSize($this->getProductImageFullpath($image),$this::IMAGE_SIZE,$this::IMAGE_SIZE,2);
-                //$x = $x - $this::IMAGE_SIZE * $sizes[0];
+            foreach ($images as $image){
+                //$page->picSize($this->getProductImageFullpath($image),$this::IMAGE_SIZE,$this::IMAGE_SIZE,2);
+                $page->picSize($image, $this::IMAGE_SIZE, $this::IMAGE_SIZE,2);
                 $x = $x - $this::IMAGE_SIZE ;
-                //echo $image." ";
             }
+
 		    $x = $x - 5 * (count($images) - 1) ;
-        } else {    // картинки слева - просто задаем базовый отступ по x
+        }
+        // картинки слева - просто задаем базовый отступ по x
+        else {
 		    $x+=5;
 	    }
-
-
-        //echo $x." ";
 
         $count = 0;
         // count of images (x75)
@@ -338,10 +377,12 @@ class Model_Static_PdfBook {
         foreach ($images as $image) {
             if($this ->print){
                 //$c = $page -> drawPic(APPLICATION_ROOT . '/files/images/product_tiff/' . substr($image, 0, strripos($image, ".")).'.tif', $x, $page -> getHeight() - 20 - $offset, $this::IMAGE_SIZE, $this::IMAGE_SIZE, isset($images[1]) ? 1 : 2,1);
-                $c = $page -> drawPic($this->getProductImageFullpath($image), $x, $page -> getHeight() - 20 - $offset, $this::IMAGE_SIZE, $this::IMAGE_SIZE, 2,1);
-            }else{
-                $c = $page -> drawPic($this->getProductImageFullpath($image), $x, $page -> getHeight() - 20 - $offset, $this::IMAGE_SIZE, $this::IMAGE_SIZE, isset($images[1]) ? 1 : 2,1);
+                $c = $page -> drawPic($image, $x, $page -> getHeight() - 20 - $offset, $this::IMAGE_SIZE, $this::IMAGE_SIZE, 2,1);
             }
+            else{
+                $c = $page -> drawPic($image, $x, $page -> getHeight() - 20 - $offset, $this::IMAGE_SIZE, $this::IMAGE_SIZE, isset($images[1]) ? 1 : 2,1);
+            }
+
             if ($page -> getPageNumber() % 2 == 0) {    // если картинки справа, то не считаем полную ширину 
                 $x += $this::IMAGE_SIZE  + 5;
             } else {
@@ -684,7 +725,7 @@ class Model_Static_PdfBook {
         return $this->book;
     }
 
-    // функция генерации страниц нашего продукта. Сделано так, что бы мы могли писать номер страници. Берем картинки  и накладываем на них информацию.
+    // функция генерации страниц нашего продукта. Сделано так, что бы мы могли писать номер страницы. Берем картинки  и накладываем на них информацию.
     public function generateOurProduction( $page = 1 , $print = false ){
 	$this->category = "Наше производство";
 	if($this->format == 'A4' && $this->print){	

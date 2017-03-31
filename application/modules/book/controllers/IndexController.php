@@ -158,14 +158,9 @@ class Book_IndexController extends Zend_Controller_Action {
             ? $this->getRequest()->getParam("print")
             : true;
 
-        //Zend_Debug::dump($print); die();
-
 
         $pdfBook = new Model_Static_PdfBook($pageFormat , $print);
 
-		$pdfBook->logger = new Zend_Log();
-		$pdfBook->logWriter = new Zend_Log_Writer_Stream(APPLICATION_ROOT.'/book.log');
-		$pdfBook->logger->addWriter($pdfBook->logWriter);
 		$pdfBook->logger->log('get params', Zend_Log::INFO);
 
 		$category = $this->_categoriesModel->find($categoryId)->current();
@@ -285,8 +280,8 @@ class Book_IndexController extends Zend_Controller_Action {
 		$path = $this::PDFBOOK_DIR;
 		$zip = new ZipArchive;
 
-		$file_name = $path.'catalog_'.date("Ymd").'.zip';
-		$zip->open($file_name, ZipArchive::CREATE);
+		$file_name = 'catalog_'.date("Ymd").'.zip';
+		$zip->open($path.$file_name, ZipArchive::CREATE);
 		if (false !== ($dir = opendir($path)))
          {
              while(false !== ($file = readdir($dir)))
