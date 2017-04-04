@@ -58,6 +58,7 @@
                     PAGE = result.page;
                     $("#startButton").click();
                 }else{
+                    $("#log").append("Генерация каталога завершена!!!");
                     $('#loading').show().html('<a href="/files/pdf/book'+ result.zip_file +'">Скачать сгенерированный каталог (zip)</a>');
                 }
             }, 'json').error(function(post_error) {
@@ -116,8 +117,8 @@
                 $('#loading').show();
                 generateCategory(0);
 
-            }, 'json').error(function() {
-                alert("Error occurred1");
+            }, 'json').error(function(error) {
+                alert("Error occurred1\n" + error.responseText);
                 buttonEnable();
                 $('#loading').hide();
             });
@@ -138,8 +139,8 @@
 </script>
 
 <div id="loading" style="display: none;">Loading...</div>
-<h2>Генерация книги</h2>
-<textarea id="log" cols="100" rows="20" readonly="readonly"></textarea>
+<h2>Генерация каталога</h2>
+<textarea id="log" rows="20" readonly="readonly" style="width: 100%;"></textarea>
 <br/>Формат A5 <input type="radio" name="page_format" value="A5"> Формат A4<input type="radio" name="page_format" checked value="A4"> Для печати <input type="checkbox" name="print">
 <button id="startButton">
 	Генерировать книгу

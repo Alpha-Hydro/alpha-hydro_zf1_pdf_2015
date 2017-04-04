@@ -52,6 +52,7 @@ class Model_Static_PdfBook {
 	     	
     /**
      * Current product category
+     * @var Model_DbRow_Category
      */
     protected $category;
     
@@ -62,7 +63,6 @@ class Model_Static_PdfBook {
 
     /**
      * Current page
-     *
      * @var Model_Static_PdfPage
      *
      */
@@ -70,22 +70,33 @@ class Model_Static_PdfBook {
     
     /**
      * Page margins, left and right swap each page
+     * @var array
      */
     protected $margins = array();
     
     /**
      * Current active side icon, NULL - don't draw side icons
+     * @var mixed
      */
     protected $sideIconActive = NULL;
-    
-    /*
-     * size page str $format_size 
+
+    /**
+     * size page str $format_size
+     * @var string
      */
     protected $format_size;
-    /*
-     * format page str $format 
+
+    /**
+     * format page str $format
+     * @var string
      */
     protected $format;
+
+
+    /**
+     * @var bool
+     */
+    protected $print;
 
     /**
      * Create new book
@@ -99,39 +110,43 @@ class Model_Static_PdfBook {
     
     //В зависимости от формата выставляем значения для объекта.
     public function __construct( $format, $print = false) {
-        $this->logger = new Zend_Log();
 
+        $this->print = $print;
+        $this->format = $format;
+
+        $this->logger = new Zend_Log();
         $this->logWriter = new Zend_Log_Writer_Stream(APPLICATION_ROOT.'/book.log');
         $this->logger->addWriter($this->logWriter);
+
 
         $this->errorLog = new Zend_Log();
         $this->errWriter = new Zend_Log_Writer_Stream(APPLICATION_ROOT.'/pdf_error.log');
         $this->errorLog->addWriter($this->errWriter);
 
-        /*$filter = new Zend_Log_Filter_Priority(Zend_Log::ERR);
-        $this->errWriter->addFilter($filter);*/
 
 	    if ($format == 'A4'){
-		   
-		    if( $print == 'true' ) $print = TRUE;
-		    else $print = FALSE;
+
 		    if($print){
 			    $this->format_size = '625:872:';
 		    }
 		    else{
 			    $this->format_size = '595:842:';
 		    }
-		    $this->format = 'A4';
-		    $this->print = $print;
 	    }
 	    elseif($format == 'A5'){
 		    $this->format_size = '419:595:';
-		    $this->format = 'A5';
-		    $this->print = $print;
 	    } 
     }
-    
+
+    /**
+     * Создаем рщвую книгу и 1 страницу
+     *
+     * @param int $page
+     * @param bool $init
+     * @return Model_Static_PdfPage
+     */
     protected function createBook($page = 1, $init = true) {
+
         $this->book = new Zend_Pdf();
         $this->page = new Model_Static_PdfPage($page, $init, $this->margins, $this->format, $this->format_size, $this->print);
 
@@ -140,12 +155,12 @@ class Model_Static_PdfBook {
     
     /**
      * Swap margins
+     * Меняем местами отступы
      * 
      * @param array $margins Margins to swap
-     * 
      * @return array Swapped margins
      */
-    private function swapMargins( $margins ){
+    private function swapMargins($margins){
         $left = $margins['left'];
         $margins['left'] = $margins['right'];
         $margins['right'] = $left;
@@ -155,9 +170,9 @@ class Model_Static_PdfBook {
     
     /**
      * Add new page to book
+     * Добавляем новую страницу
      * 
      * @param bool $init Initialize page by 0 offset
-     * 
      * @return Model_Static_PdfPage Added page
      */
     protected function addPage($init = true) {
@@ -172,7 +187,8 @@ class Model_Static_PdfBook {
                 $init,
                 $this->swapMargins( $this -> page -> getMargins() ),
                 $this->format,
-                $this->format_size, $this->print
+                $this->format_size,
+                $this->print
             );
        
         return $this->page;
@@ -180,11 +196,11 @@ class Model_Static_PdfBook {
     
     /**
      * Pop last page from book
+     * Выгружаем последнюю страницу
      * 
-     * @return Model_Static_PdfPage Last page
+     * @return Model_Static_PdfPage
      */
     protected function lastPage() {
-
         $this -> page = array_pop($this->book-> pages);
 
         return $this->page;
@@ -192,12 +208,16 @@ class Model_Static_PdfBook {
     
     /**
      * Size of product image
+     * Размер изображения продукта
+     *
+     * @const int
      */
     const IMAGE_SIZE = 75;
 
 
     /**
      * returns full image path+filename of product image
+     * Полный путь изображения в зависимости от параметра вывода на печать
      *
      * @param string $filename
      * @return string fullpath
@@ -215,21 +235,18 @@ class Model_Static_PdfBook {
         return $path;
     }
 
-    
+
     /**
      * Draw product to book
      * Creates new if book isn't created
-     * 
+     * Функция рендеринга продуктов
+     *
      * @param Zend_Db_Table_Row $product Product
-     * 
-     * @var string $DEBUG Enable auto-calculate height debug
-     * 
+     * @param bool $for_catalog
      * @return Zend_Pdf Generated book
-     * 
+     * @internal param string $DEBUG Enable auto-calculate height debug
      * @api
      */
-    
-    //Функция рендеринга продуктов.
     public function byProduct($product, $for_catalog = false) {
 	
         $category =  $product->findManyToManyRowset("Model_DbTable_Categories", "Model_DbTable_CategoryXref") -> current();
@@ -282,11 +299,20 @@ class Model_Static_PdfBook {
         $subProducts = $product->findDependentRowset ( "Model_DbTable_Subproducts", 'SubproductsRel' , $select );
 
         $productHeight = 20 + max(array(80, ($this->format == 'A4')?$paramsLinesCount * 12: $paramsLinesCount * 8 )) // images
-                         + (($product->description) ? $page->getTextBlockHeight(trim($product -> description), $style, 3) : 0) // description
-                         + ((count($subProducts) <= 30) ? ($this->format == 'A4')?count($subProducts) * 12 + 10 :count($subProducts) * 8 + 12 + 15 : 0) // subProducts table
-                         + ($product -> note ? $page -> getTextBlockHeight($product -> note, $noteStyle) + 10 : 0); // note*/
+            + (($product->description)
+                ? $page->getTextBlockHeight(trim($product -> description), $style, 3)
+                : 0) // description
+            + ((count($subProducts) <= 30)
+                ? ($this->format == 'A4')?count($subProducts) * 12 + 10 :count($subProducts) * 8 + 12 + 15
+                : 0) // subProducts table
+            + ($product->note
+                ? $page->getTextBlockHeight($product->note, $noteStyle) + 10
+                : 0); // note
+
         if ($offset) {
-            if ($page -> getHeight() - $offset - 10 < ((count($subProducts) <= 30)?$productHeight:intval($productHeight)+40) ){
+            if ($page->getHeight() - $offset - 10 < ((count($subProducts) <= 30)
+                    ?$productHeight
+                    :intval($productHeight)+40) ){
 
                 if($page->getPageNumber() > 1) {
                     $page -> drawCategory(isset($this->old_category)?$this->old_category:$this->category);
@@ -306,7 +332,7 @@ class Model_Static_PdfBook {
 
         $this->product_page = $page->getPageNumber();
         
-        // DEBUG auto-height calculate
+        // @TODO DEBUG auto-height calculate
         if ( isset($_REQUEST['DEBUG']) ) {
             $page -> drawHorizontalLine(-20, 575, $page -> getHeight() - $offset, 1, new Zend_Pdf_Color_Html('green'));
             $page -> drawHorizontalLine(-20, 575, $page -> getHeight() - $offset - $productHeight, 2, new Zend_Pdf_Color_Html('red'));
@@ -315,7 +341,6 @@ class Model_Static_PdfBook {
 
         
         // --- block / information
-
         $page->setFont(Model_Static_Fonts::get("Franklin Gothic Demi Cond"), 14);
         $page->drawTextBlock($product -> sku, 5, $page -> getHeight() - $offset);
 	
@@ -324,10 +349,6 @@ class Model_Static_PdfBook {
 
 
         // --- block / images
-        /*$images = array($product->image);
-        if ($product->a_images)
-            $images[] = $product->a_images[0];*/
-
         $images = [];
         // Проверка на существование изображений
         // Если файла не существует в масссив не записываем
@@ -337,7 +358,7 @@ class Model_Static_PdfBook {
             if (file_exists($fileImage))
                 $images[] = $fileImage;
             else
-                $this->logger->log("Файл ".$fileImage. " не существует.", Zend_Log::INFO);
+                $this->errorLog->log("Файл ".$fileImage. " не существует.", Zend_Log::INFO);
         }
 
         if ($product->a_images){
@@ -348,8 +369,6 @@ class Model_Static_PdfBook {
                 $this->errorLog->log("Файл ".$fileDraft. " не существует.", Zend_Log::INFO);
         }
 
-        //Zend_Debug::dump($images); die();
-
 
         $x = 0;
         // если картинки справа (иконки слева)
@@ -359,7 +378,6 @@ class Model_Static_PdfBook {
             $x = $page->getWidth()- 5;
 
             foreach ($images as $image){
-                //$page->picSize($this->getProductImageFullpath($image),$this::IMAGE_SIZE,$this::IMAGE_SIZE,2);
                 $page->picSize($image, $this::IMAGE_SIZE, $this::IMAGE_SIZE,2);
                 $x = $x - $this::IMAGE_SIZE ;
             }
@@ -376,7 +394,6 @@ class Model_Static_PdfBook {
     	//в зависимости от задачи, выбираем папку с картинками, за это отвечает параметр $print
         foreach ($images as $image) {
             if($this ->print){
-                //$c = $page -> drawPic(APPLICATION_ROOT . '/files/images/product_tiff/' . substr($image, 0, strripos($image, ".")).'.tif', $x, $page -> getHeight() - 20 - $offset, $this::IMAGE_SIZE, $this::IMAGE_SIZE, isset($images[1]) ? 1 : 2,1);
                 $c = $page -> drawPic($image, $x, $page -> getHeight() - 20 - $offset, $this::IMAGE_SIZE, $this::IMAGE_SIZE, 2,1);
             }
             else{
@@ -392,7 +409,6 @@ class Model_Static_PdfBook {
         }
 
         // --- block / params
-
         $offsetX = ($page -> getPageNumber() % 2) ? $this::IMAGE_SIZE * $count + 15 : 10;
         $tableWidth = $page->getWidth() - $this::IMAGE_SIZE*$count - 25;
         if (count($productParams) > 0) {
@@ -405,7 +421,6 @@ class Model_Static_PdfBook {
 
 
         // --- block / description
-        
         if ($product -> description) {
             $style = new Zend_Pdf_Style();
             $style -> setFont(Model_Static_Fonts::get("Arial Narrow"), ($this->format == 'A4')?8.0:6.5);
@@ -421,12 +436,7 @@ class Model_Static_PdfBook {
         }
 
         // --- block / sub products
-
         $params = array();
-
-        /*$subproductsModel = new Model_DbTable_Subproducts ();
-        $select = $subproductsModel->select()->order('order ASC');
-        $subProducts = $product->findDependentRowset ( "Model_DbTable_Subproducts", 'SubproductsRel' , $select );*/
 
         $subproductParams = $product->getSubParams();
 
@@ -451,8 +461,6 @@ class Model_Static_PdfBook {
             $noteHeight = $page -> getTextBlockHeight($product -> note, $noteStyle);
         else
             $noteHeight = 0;
-//
-//	$noteHeight = 0;
 
         $curRow = 0;   
         if($params) {
@@ -463,22 +471,15 @@ class Model_Static_PdfBook {
 				
                 if ($curRow !== NULL) {
                     $page->drawCategory($this->category);					
-		}
-//		else {
-//	                if ($product -> note && $for_catalog) {					
-//				$page -> drawTextBlock($product -> note, 5, $page -> getCurrentPosition() + 24, $noteStyle);
-//			}elseif($product -> note){
-//				$page -> drawTextBlock($product -> note, 5, $page -> getCurrentPosition() + 62, $noteStyle);
-//			}					
-//		}
-//		$page -> drawTextBlock($curRow, -20, $page -> getHeight() - $offset - $productHeight);
+		        }
+
                 $page = $this -> addPage(false);
-		if( $curRow !== NULL ) $curRow++;
+		        if( $curRow !== NULL ) $curRow++;
             }
         }
         else {
             $this -> AddPage(false);
-	}
+	    }
         
         return $this -> book;
     }
@@ -486,15 +487,13 @@ class Model_Static_PdfBook {
     /**
      * Get category childs.
      * @param Zend_Db_Table_Row $category Category
-     * 
-     * @return array Lowest level categories
+     * @return array Zend_Db_Table_Row[] Lowest level categories
      */
-    private function categoryChilds( $category ){
+    private function categoryChilds($category){
         
         $childs = $category->findDependentRowset( "Model_DbTable_Categories" );
-        
+
         $categories = array();
-        
         if ( count($childs) > 0 ) foreach ( $childs as $child ){
             $categories = array_merge($categories, $this->categoryChilds($child));
         } else 
@@ -531,8 +530,6 @@ class Model_Static_PdfBook {
 			}
 		}
 
-		//return $categories -> возвращает корректно
-
         if($this->format == 'A4' && $this->print){
             $this->margins = array('top'=>49, 'right'=>54, 'bottom'=>34, 'left'=>44);
         }
@@ -541,8 +538,6 @@ class Model_Static_PdfBook {
         }
         
         if ( $page % 2 == 0 ) $this->margins = $this->swapMargins($this->margins);
-
-        //return $this->margins -> возвращает корректно
 
         $this->createBook($this->category_page);
 
@@ -557,7 +552,6 @@ class Model_Static_PdfBook {
 		$old_category = array(); //списко категорий которые уже были отрендарины
 		$pat = 0; //счетчик частей категорий
 
-        //return count($categories); //-> возвращает корректно
         foreach ($categories as $category) {
             $continue = false;
             $this->logger->log('$return_categories ='.count($return_categories), Zend_Log::INFO);
@@ -574,7 +568,6 @@ class Model_Static_PdfBook {
             }
             $this->logger->log('Generate subcategory (id:'.$category->id.', '.$i.' from '.count($categories).')', Zend_Log::INFO);
             $products = $category -> findManyToManyRowset("Model_DbTable_Products", "Model_DbTable_CategoryXref");
-            //count($products) -> возвращает корректно
 
             $firstCPage = array();
             $count_exceptions = 0;
@@ -632,8 +625,6 @@ class Model_Static_PdfBook {
             }
         }
 
-        //return count($firstCPage);
-
 	    //если прошли все интерации и $i равна количеству категорий то возвращаем категорию.
         if( $i == count($categories)){
             $this->logger->log('Finishing...', Zend_Log::INFO);
@@ -641,9 +632,16 @@ class Model_Static_PdfBook {
             $this->book-> end_pages = $this->category_page;
             return $this->book;
         }
+
+        return $this->book;
     }
 
-	public function addCategoryToIndex($category_id, $page, $depth = 0) {
+    /**
+     * @param $category_id
+     * @param $page
+     * @param int $depth
+     */
+    public function addCategoryToIndex($category_id, $page, $depth = 0) {
 		$categoryIndexModel = new Model_DbTable_CategoryIndex();
 		
 		$issetRow = $categoryIndexModel->fetchRow(
@@ -673,17 +671,17 @@ class Model_Static_PdfBook {
      * Adds index pages
      * 
      * @param int $page Start page
-     * 
      * @return Zend_Pdf Generated book
      */
     public function IndexPages( $page = 1 ){
     			
         $this->category = "Предметный указатель";
-	if($this->format == 'A4' && $this->print){	
-	        $this->margins = array('top'=>34, 'right'=>64, 'bottom'=>34, 'left'=>44);
-	}else{
-		$this->margins = array('top'=>20, 'right'=>50, 'bottom'=>20, 'left'=>30);        
-	}
+        if($this->format == 'A4' && $this->print){
+                $this->margins = array('top'=>34, 'right'=>64, 'bottom'=>34, 'left'=>44);
+        }else{
+            $this->margins = array('top'=>20, 'right'=>50, 'bottom'=>20, 'left'=>30);
+        }
+
         if ( $page % 2 == 0 ) $this->margins = $this->swapMargins($this->margins);
         
         $productIndexModel = new Model_DbTable_ProductIndex();
@@ -710,7 +708,6 @@ class Model_Static_PdfBook {
                     $productIndex->sku .= str_repeat( '.', intval(($curColWidth-$textWidth)/($pointWidth/2)));                 
                     
                     $page->drawTextBlock($productIndex->sku, ($colWidth+20)*$column, $page->getHeight()-$row*6);
-//                    $page->drawTextBlock(intval($page->getWidth()).'--'.$colWidth.'--'.(($colWidth+20)*$column + $curColWidth).'--'.intval($curColWidth-$textWidth), ($colWidth+20)*$column, $page->getHeight()-$row*6);
                     $page->drawTextBlock($productIndex->page,
                                         ($colWidth+20)*$column + $curColWidth,
                                         $page->getHeight()-$row*6);										
@@ -726,51 +723,49 @@ class Model_Static_PdfBook {
     }
 
     // функция генерации страниц нашего продукта. Сделано так, что бы мы могли писать номер страницы. Берем картинки  и накладываем на них информацию.
-    public function generateOurProduction( $page = 1 , $print = false ){
-	$this->category = "Наше производство";
-	if($this->format == 'A4' && $this->print){	
-	        $this->margins = array('top'=>49, 'right'=>54, 'bottom'=>34, 'left'=>44);
-	}else{
-		$this->margins = array('top'=>35, 'right'=>40, 'bottom'=>20, 'left'=>30);
-	}
-        if ( $page % 2 == 0 ) $this->margins = $this->swapMargins($this->margins);
+    public function generateOurProduction($page = 1 , $print = false ){
+        $this->category = "Наше производство";
+        if($this->format == 'A4' && $this->print){
+            $this->margins = array('top'=>49, 'right'=>54, 'bottom'=>34, 'left'=>44);
+        }else{
+            $this->margins = array('top'=>35, 'right'=>40, 'bottom'=>20, 'left'=>30);
+        }
+
+        if ( $page % 2 == 0 )
+            $this->margins = $this->swapMargins($this->margins);
 	
-	$page = $this->createBook( $page, false );
-	$page->print = $print;
-		try {
-			for( $i = 1; $i < 3; $i++){
-				//Здесь происходит изменение картинок нашего продукта.
-//				if( $this -> print){
-//					$image = Zend_Pdf_Image::imageWithPath(APPLICATION_PATH . '/../files/pdf/ourProduction-'.$i.'.tif');
-//					$page->drawSideIcons( "4" );
-//					$page->drawImage($image, ((int)$page -> getPageNumber() % 2 == 0)? 24: 10, 0, 618, 871);
-//				}else{
-					$image = Zend_Pdf_Image::imageWithPath(APPLICATION_PATH . '/../files/pdf/ourProduction-'.$i.'.png');
-					$page->drawSideIcons( "4" );
-					$page->drawImage($image, ((int)$page -> getPageNumber() % 2 == 0)? 30: 5, 0, 588, 841);
-//				}
-//				595:842
-				$page = $this->addPage(false); 
-			}
-		} catch (Zend_Pdf_Exception $e) {
-			var_dump($e->getMessage());
-		}
+        $page = $this->createBook($page, false);
+        $page->print = $print;
+
+        for( $i = 1; $i < 3; $i++){
+            $image = Zend_Pdf_Image::imageWithPath(APPLICATION_PATH . '/../files/pdf/ourProduction-'.$i.'.png');
+            $page->drawSideIcons("4");
+            $page->drawImage($image, ((int)$page -> getPageNumber() % 2 == 0)? 30: 5, 0, 588, 841);
+            $page = $this->addPage(false);
+        }
 
 	    return $this->book;
     }
 
-    public function generateContents( $page = 1 ){
-	   $INDEXPAGE_ROWS = $this::INDEXPAGE_ROWS-44;
+    /**
+     * @param int $page
+     * @return mixed
+     */
+    public function generateContents($page = 1 ){
+	    $INDEXPAGE_ROWS = $this::INDEXPAGE_ROWS-44;
         $this->category = "Содержание";
-	if($this->format == 'A4' && $this->print){	
-		$this->margins = array('top'=>34, 'right'=>64, 'bottom'=>34, 'left'=>44);
-	}else{
-		$this->margins = array('top'=>20, 'right'=>50, 'bottom'=>20, 'left'=>30);
-	}
-        if ( $page % 2 == 0 ) $this->margins = $this->swapMargins($this->margins);
+
+        if($this->format == 'A4' && $this->print){
+            $this->margins = array('top'=>34, 'right'=>64, 'bottom'=>34, 'left'=>44);
+        }else{
+            $this->margins = array('top'=>20, 'right'=>50, 'bottom'=>20, 'left'=>30);
+        }
+
+        if ($page % 2 == 0)
+            $this->margins = $this->swapMargins($this->margins);
         
         $categoryIndexModel = new Model_DbTable_CategoryIndex();
-        $indexes = $categoryIndexModel->getAdapter()->fetchAll("SELECT c.name AS name, ci.page AS page, ci.category_id as category_id, ci.depth as depth FROM categories AS c INNER JOIN categoryIndex AS ci ON ci.category_id = c.id ORDER BY ci.page, ci.depth" );
+        $indexes = $categoryIndexModel->getAdapter()->fetchAll("SELECT c.name AS name, ci.page AS page, ci.category_id AS category_id, ci.depth as depth FROM categories AS c INNER JOIN categoryIndex AS ci ON ci.category_id = c.id ORDER BY ci.page, ci.depth" );
 
         $page = $this->createBook( $page, false );
         $colWidth = $page->getWidth();       
@@ -849,4 +844,3 @@ class Model_Static_PdfBook {
         return $this->book;
     }
 }
-?>

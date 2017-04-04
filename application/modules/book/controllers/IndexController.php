@@ -239,7 +239,7 @@ class Book_IndexController extends Zend_Controller_Action {
         $book = $pdfBook->IndexPages($page);
         $this->view->nextpage = $page + count($book->pages);
 		
-        $saveFilename = str_repeat("0", 4 - strlen($page)) . $page . '-' . $this -> view -> nextpage . '.pdf';
+        $saveFilename = str_repeat("0", 4 - strlen($page)) . $page . '-' . $this->view->nextpage . '.pdf';
         
         $book->save($this::PDFBOOK_DIR . '/' . $saveFilename);
 		
@@ -250,6 +250,7 @@ class Book_IndexController extends Zend_Controller_Action {
 		$this->view->page = $this->contentPages + $startPage;
 		
 		$this->zipResults();
+		$pdfBook->logger->log("Happy End!!!", Zend_Log::INFO);
     }
 
     /**
@@ -297,7 +298,6 @@ class Book_IndexController extends Zend_Controller_Action {
              die('Can\'t read dir');
          }
 		$zip->close();
-
 		$this->view->zipFile = $file_name;
 	}
 
